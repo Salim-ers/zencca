@@ -141,7 +141,7 @@ export default function Hero() {
           return (
             <li
               key={c.slug}
-              className={cn("relative shrink-0", dist === 3 && "comptoir-far")}
+              className={cn("relative shrink-0", dist === 3 && "comptoir-far", dist === 2 && "comptoir-mid")}
               style={{
                 height: `calc(var(--cup-h) * ${scale})`,
                 marginBottom: `${dist * 0.5}svh`,
@@ -158,7 +158,11 @@ export default function Hero() {
                   </div>
                 )}
                 <div data-rise data-enter className="relative h-full">
-                  <span aria-hidden className="absolute -bottom-[1%] -right-[9%] left-[13%] h-[7%] rounded-[50%] bg-encre/50 blur-[10px]" />
+                  <span
+                    aria-hidden
+                    className="absolute -bottom-[1.5%] -right-[9%] left-[10%] h-[8%]"
+                    style={{ background: "radial-gradient(closest-side, rgba(32,20,9,0.55), rgba(32,20,9,0))" }}
+                  />
                   <div data-lift className="relative h-full">
                     <TransitionLink
                       href={`/la-carte?boisson=${c.slug}`}
@@ -199,30 +203,55 @@ export default function Hero() {
 
         {/* Le store prune de la façade */}
         <div className="on-dark bg-store text-papier">
-          <div className="wrap grid grid-cols-1 items-center gap-x-8 gap-y-3 py-5 lg:grid-cols-12 lg:gap-y-0 lg:py-3.5">
+          <div className="wrap grid grid-cols-1 items-center gap-x-8 gap-y-2.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] pt-3.5 sm:grid-cols-2 lg:grid-cols-12 lg:gap-y-0">
             <div data-fade data-enter className="lg:col-span-4">
               <p className="flex items-baseline justify-between gap-4">
-                <span className="font-display text-[clamp(1.6rem,2.2vw,2.25rem)] leading-[1.05] tracking-tight">Salon de Thé</span>
+                <span className="font-display text-[clamp(1.5rem,2.2vw,2.25rem)] leading-[1.05] tracking-tight">Salon de Thé</span>
                 <span className="font-cjk text-xl lg:hidden" aria-hidden>
                   {site.cjkName}
                 </span>
               </p>
-              <TransitionLink href="/nous-trouver" className="link-infuse inline-block text-[0.95rem] text-papier/85 max-lg:mt-1">
+              <TransitionLink href="/nous-trouver" className="link-infuse inline-block text-[0.95rem] text-papier/85">
                 {site.address.street}, {site.address.district}
               </TransitionLink>
             </div>
-            <p data-fade data-enter className="text-[1.0625rem] leading-snug text-papier/90 lg:col-span-4 lg:text-center">
+            <p
+              data-fade
+              data-enter
+              className="text-[0.95rem] leading-snug text-papier/90 max-lg:[@media(max-height:660px)]:hidden sm:col-start-1 lg:col-span-4 lg:col-start-5 lg:row-start-1 lg:text-center lg:text-[1.0625rem]"
+            >
               Des créations gourmandes, colorées et pleines de douceur, au cœur de Paris.
             </p>
-            <div data-fade data-enter className="flex items-center gap-6 max-lg:mt-2 lg:col-span-4 lg:justify-end">
-              <span className="font-cjk text-3xl max-lg:hidden" aria-hidden>
-                {site.cjkName}
-              </span>
-              <Magnetic className="max-lg:w-full">
-                <TransitionLink href="/la-carte" className="btn btn-sign max-lg:w-full" style={{ ["--btn-fill" as string]: "#fdf6ea", ["--btn-fg-hover" as string]: "#201409" }}>
-                  Découvrir la carte <Arrow />
+            <div data-fade data-enter className="sm:col-start-2 sm:row-span-2 sm:row-start-1 lg:col-span-4 lg:col-start-9 lg:row-span-1">
+              {/* Mobile et tablette : les deux boutons habituels */}
+              <div className="flex gap-2.5 lg:hidden">
+                <a
+                  href={site.maps.directionsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-sign flex-1 !px-3 sm:!px-5"
+                  style={{ ["--btn-fill" as string]: "#fdf6ea", ["--btn-fg-hover" as string]: "#201409" }}
+                >
+                  <svg viewBox="0 0 24 24" className="h-[1.1em] w-[1.1em] shrink-0" aria-hidden>
+                    <path d="M12 2l8 19-8-4-8 4 8-19z" fill="currentColor" />
+                  </svg>
+                  Itinéraire
+                </a>
+                <TransitionLink href="/la-carte" className="btn btn-ghost-light flex-1 !px-3 sm:!px-5">
+                  La carte <Arrow />
                 </TransitionLink>
-              </Magnetic>
+              </div>
+              {/* Grand écran : l'itinéraire passe par « Nous rendre visite », dans l'en-tête */}
+              <div className="flex items-center justify-end gap-6 max-lg:hidden">
+                <span className="font-cjk text-3xl" aria-hidden>
+                  {site.cjkName}
+                </span>
+                <Magnetic>
+                  <TransitionLink href="/la-carte" className="btn btn-sign" style={{ ["--btn-fill" as string]: "#fdf6ea", ["--btn-fg-hover" as string]: "#201409" }}>
+                    Découvrir la carte <Arrow />
+                  </TransitionLink>
+                </Magnetic>
+              </div>
             </div>
           </div>
         </div>

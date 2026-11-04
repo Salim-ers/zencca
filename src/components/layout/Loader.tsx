@@ -49,21 +49,26 @@ export default function Loader() {
       if (started) return;
       started = true;
       const tl = gsap.timeline();
-      tl.fromTo(svg!, { scale: 0.86, autoAlpha: 0, y: 20 }, { scale: 1, autoAlpha: 1, y: 0, duration: 0.7, ease: "back.out(1.6)" })
-        .add(() => mascot.current?.blink(), 0.5)
-        .add(() => void mascot.current?.sip({ duration: 800, refill: false }), 0.6)
-        .to(letters, { yPercent: 0, opacity: 1, duration: 0.55, stagger: 0.05, ease: "back.out(2)" }, 0.75)
-        .to(waves, { yPercent: 0, duration: 0.9, stagger: 0.08, ease: "power3.inOut" }, 1.3)
-        .to(el, { yPercent: -100, duration: 0.9, ease: "power4.inOut" }, 1.85)
-        .to(el.querySelector("[data-stage]"), { yPercent: 30, duration: 0.9, ease: "power4.inOut" }, 1.85)
-        .add(() => markRevealed(), 2.1)
+      tl.fromTo(svg!, { scale: 0.86, autoAlpha: 0, y: 20 }, { scale: 1, autoAlpha: 1, y: 0, duration: 0.55, ease: "back.out(1.6)" })
+        .add(() => mascot.current?.blink(), 0.35)
+        .add(() => void mascot.current?.sip({ duration: 600, refill: false }), 0.4)
+        .to(letters, { yPercent: 0, opacity: 1, duration: 0.45, stagger: 0.04, ease: "back.out(2)" }, 0.5)
+        .to(waves, { yPercent: 0, duration: 0.7, stagger: 0.06, ease: "power3.inOut" }, 0.95)
+        .to(el, { yPercent: -100, duration: 0.75, ease: "power4.inOut" }, 1.4)
+        .to(el.querySelector("[data-stage]"), { yPercent: 30, duration: 0.75, ease: "power4.inOut" }, 1.4)
+        .add(() => markRevealed(), 1.6)
         .add(finish);
     };
-    // On attend les polices (au plus 700 ms) pour éviter tout saut
-    const t = setTimeout(run, 700);
+    // L'animation démarre une fois le navigateur libre : elle ne se bat pas avec le démarrage de la page
+    const start = () => {
+      if (window.requestIdleCallback) window.requestIdleCallback(run, { timeout: 250 });
+      else requestAnimationFrame(run);
+    };
+    // On attend les polices (au plus 500 ms) pour éviter tout saut
+    const t = setTimeout(start, 500);
     document.fonts?.ready.then(() => {
       clearTimeout(t);
-      run();
+      start();
     });
     return () => clearTimeout(t);
   }, []);

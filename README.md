@@ -36,7 +36,7 @@ Tout le contenu éditable est centralisé dans `src/data/` :
 | `gallery.ts` | Photos de la galerie, catégories, légendes, composition |
 | `images.ts` | Photos importées + textes alternatifs + point focal |
 
-- **Prix** : recopiés de la carte en boutique, masqués tant que `SHOW_PRICES = false`.
+- **Prix** : recopiés de la carte en boutique et affichés (`SHOW_PRICES`). Une boisson sans prix lisible n'affiche que ses formats.
 - **Retirer une offre** : `active: false` dans `offers.ts`. Les dates sont vérifiées automatiquement (page régénérée toutes les heures).
 - **Ajouter une boisson** : ajouter une entrée dans `products.ts` (photo facultative : sans photo, un visuel graphique de ses couches de couleur s'affiche).
 - **Ajouter une photo** : déposer le fichier dans `src/assets/photos/`, l'importer dans `images.ts`.

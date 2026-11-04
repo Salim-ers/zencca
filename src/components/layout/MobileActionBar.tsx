@@ -7,7 +7,7 @@ import { site } from "@/data/site";
 import { scrollToEl } from "@/lib/lenis";
 import { cn } from "@/lib/utils";
 
-/** Barre d'action mobile : itinéraire + accès à la carte, toujours à portée de pouce. */
+/** Barre d'action mobile et tablette : itinéraire + accès à la carte, toujours à portée de pouce. */
 export default function MobileActionBar() {
   const pathname = usePathname();
   const [visible, setVisible] = useState(false);
@@ -33,7 +33,7 @@ export default function MobileActionBar() {
   return (
     <div
       className={cn(
-        "fixed inset-x-0 bottom-0 z-[70] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-[transform,opacity] duration-500 ease-[var(--ease-soft)] md:hidden",
+        "fixed inset-x-0 bottom-0 z-[70] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-[transform,opacity] duration-500 ease-[var(--ease-soft)] lg:hidden",
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-full opacity-0"
       )}
       aria-hidden={!visible}
@@ -62,11 +62,11 @@ export default function MobileActionBar() {
           </button>
         ) : (
           <TransitionLink
-            href="/nous-trouver"
+            href={pathname === "/la-carte" ? "/nous-trouver" : "/la-carte"}
             tabIndex={visible ? 0 : -1}
             className="flex h-12 flex-1 items-center justify-center rounded-full font-semibold text-papier active:scale-[0.97]"
           >
-            Nous trouver
+            {pathname === "/la-carte" ? "Nous trouver" : "La carte"}
           </TransitionLink>
         )}
       </div>

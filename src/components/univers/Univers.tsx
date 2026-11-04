@@ -41,7 +41,7 @@ function StrataCup() {
   );
   return (
     <div ref={root} className="grid grid-cols-[auto_1fr] items-stretch gap-5 sm:gap-10">
-      <svg viewBox="0 0 220 440" className="h-[min(70vh,560px)] w-auto overflow-visible" aria-hidden>
+      <svg viewBox="0 0 220 440" className="h-[min(70vh,560px,100vw)] w-auto overflow-visible" aria-hidden>
         <defs>
           <clipPath id="strata-cup">
             <path d="M20 30 H200 L178 420 Q176 432 164 432 H56 Q44 432 42 420 Z" />
@@ -65,11 +65,11 @@ function StrataCup() {
         <path d="M20 30 H200 L178 420 Q176 432 164 432 H56 Q44 432 42 420 Z" fill="none" stroke="#201409" strokeWidth="4" strokeLinejoin="round" />
         <rect x="8" y="14" width="204" height="20" rx="10" fill="#fdf6ea" stroke="#201409" strokeWidth="4" />
       </svg>
-      <ul className="flex h-[min(70vh,560px)] flex-col">
+      <ul className="flex min-h-[min(70vh,560px,100vw)] min-w-0 flex-col">
         {strata.map((s) => (
-          <li key={s.label} data-lab className="flex flex-1 flex-col justify-center border-t border-encre/15 first:border-t-0">
-            <p className="font-display text-[clamp(1.6rem,3.4vw,3rem)] leading-none">{s.label}</p>
-            <p className="mt-1 text-brun">{s.note}</p>
+          <li key={s.label} data-lab className="flex flex-1 flex-col justify-center border-t border-encre/15 py-1 first:border-t-0">
+            <p className="font-display text-[clamp(1.35rem,3.4vw,3rem)] leading-none">{s.label}</p>
+            <p className="mt-1 text-sm leading-snug text-brun sm:text-base">{s.note}</p>
           </li>
         ))}
       </ul>

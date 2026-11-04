@@ -85,18 +85,24 @@ export function InfuseImage({
     () => {
       const el = ref.current!;
       const inner = el.querySelector<HTMLElement>("[data-inner]")!;
+      const counter = el.querySelector<HTMLElement>("[data-counter]")!;
       const img = el.querySelector<HTMLElement>("[data-img]")!;
-      if (prefersReducedMotion() || trigger === "none") {
-        gsap.set(inner, { clipPath: "inset(0% 0% 0% 0%)" });
-        return;
-      }
-      gsap.set(inner, { clipPath: "inset(100% 0% 0% 0%)" });
+      if (prefersReducedMotion() || trigger === "none") return;
+      // Une fenêtre monte et son contenu redescend d'autant : l'image semble se remplir sur place,
+      // avec de simples transformations, sans repeindre la photo à chaque image.
+      gsap.set(inner, { yPercent: 100 });
+      gsap.set(counter, { yPercent: -100 });
       if (zoom) gsap.set(img, { scale: 1.22 });
       const play = () =>
         gsap
-          .timeline({ delay, onStart: () => gsap.set(el, { visibility: "visible" }) })
-          .to(inner, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.25, ease: "expo.inOut" }, 0)
-          .to(img, { scale: 1, duration: 1.8, ease: "expo.out" }, 0.15);
+          .timeline({
+            delay,
+            onStart: () => gsap.set(el, { visibility: "visible" }),
+            onComplete: () => gsap.set([inner, counter, img], { clearProps: "transform" }),
+          })
+          .to(inner, { yPercent: 0, duration: 1.1, ease: "expo.inOut" }, 0)
+          .to(counter, { yPercent: 0, duration: 1.1, ease: "expo.inOut" }, 0)
+          .to(img, { scale: 1, duration: 1.5, ease: "expo.out" }, 0.1);
       if (trigger === "reveal") {
         return onReveal(play);
       }
@@ -118,30 +124,32 @@ export function InfuseImage({
   const shapeCls = shape === "soft" ? "rounded-[1.75rem] overflow-hidden" : shape === "none" ? "overflow-hidden" : shape;
   return (
     <div ref={ref} className={cn(!className?.includes("absolute") && "relative", className)} data-enter={trigger === "reveal" ? "" : undefined}>
-      <div data-inner className="absolute inset-0" style={{ clipPath: "inset(0% 0% 0% 0%)" }}>
-        <div className={cn("absolute inset-0", shapeCls)}>
-        <div className={cn("absolute", parallax ? "-inset-y-[12%] inset-x-0" : "inset-0")}>
-          <div data-img className="absolute inset-0">
-            <div
-              className={cn(
-                "absolute inset-0",
-                hoverZoom && "transition-transform duration-[1.4s] ease-[var(--ease-soft)] group-hover:scale-[1.06]"
-              )}
-            >
-            <Image
-              src={photo.src}
-              alt={photo.alt}
-              fill
-              sizes={sizes}
-              priority={priority}
-              placeholder="blur"
-              className="object-cover"
-              style={{ objectPosition: photo.focus ?? "50% 50%" }}
-            />
+      <div className={cn("absolute inset-0", shapeCls)}>
+        <div data-inner className="absolute inset-0 overflow-hidden">
+          <div data-counter className="absolute inset-0">
+            <div className={cn("absolute", parallax ? "-inset-y-[12%] inset-x-0" : "inset-0")}>
+              <div data-img className="absolute inset-0">
+                <div
+                  className={cn(
+                    "absolute inset-0",
+                    hoverZoom && "transition-transform duration-[1.4s] ease-[var(--ease-soft)] group-hover:scale-[1.06]"
+                  )}
+                >
+                  <Image
+                    src={photo.src}
+                    alt={photo.alt}
+                    fill
+                    sizes={sizes}
+                    priority={priority}
+                    placeholder="blur"
+                    className="object-cover"
+                    style={{ objectPosition: photo.focus ?? "50% 50%" }}
+                  />
+                </div>
+              </div>
             </div>
+            {children}
           </div>
-        </div>
-        {children}
         </div>
       </div>
     </div>
@@ -198,7 +206,7 @@ export function RevealText({
       >
         {line.split(" ").map((w, wi) => (
           <span key={wi} className="inline-block overflow-hidden pb-[0.12em] -mb-[0.12em] align-bottom">
-            <span data-w className="inline-block will-change-transform">
+            <span data-w className="inline-block">
               {w}
               {wi < line.split(" ").length - 1 ? " " : ""}
             </span>
@@ -307,7 +315,7 @@ export function Magnetic({ children, strength = 0.28, className }: { children: R
     };
   }, [strength]);
   return (
-    <span ref={ref} className={cn("inline-block will-change-transform", className)}>
+    <span ref={ref} className={cn("inline-block", className)}>
       {children}
     </span>
   );

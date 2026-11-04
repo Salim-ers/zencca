@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Image, { type StaticImageData } from "next/image";
 import { gsap } from "@/lib/gsap";
@@ -12,9 +12,9 @@ import { labelFor, themeFor, type TransitionTheme } from "@/data/site";
 import { WaveEdge } from "@/components/ui/Strata";
 
 type NavOpts = { theme?: TransitionTheme; label?: string; image?: StaticImageData };
-type Ctx = { navigate: (href: string, opts?: NavOpts) => void; busy: boolean };
+type Ctx = { navigate: (href: string, opts?: NavOpts) => void };
 
-const TransitionCtx = createContext<Ctx>({ navigate: () => {}, busy: false });
+const TransitionCtx = createContext<Ctx>({ navigate: () => {} });
 export const usePageTransition = () => useContext(TransitionCtx);
 
 /** Trois couches par thème : comme une boisson qui se superpose */
@@ -32,7 +32,9 @@ export default function TransitionProvider({ children }: { children: React.React
   const pathname = usePathname();
   const overlayRef = useRef<HTMLDivElement>(null);
   const pending = useRef<{ href: string; hash?: string } | null>(null);
-  const [busy, setBusy] = useState(false);
+  // En références : changer de page ne doit pas re-rendre tous les liens du site
+  const busy = useRef(false);
+  const currentPath = useRef(pathname);
   const [view, setView] = useState<{ theme: TransitionTheme; label: string; image?: StaticImageData }>({
     theme: "creme",
     label: "",
@@ -45,32 +47,41 @@ export default function TransitionProvider({ children }: { children: React.React
     const hash = pending.current?.hash;
     pending.current = null;
     if (fallback.current) clearTimeout(fallback.current);
+    if (el) gsap.killTweensOf(el.querySelector("[data-label]"));
     if (hash) requestAnimationFrame(() => scrollToEl(hash, -80));
     else scrollToTop();
-    requestAnimationFrame(() => requestAnimationFrame(() => ScrollTrigger.refresh()));
     if (!el) {
-      setBusy(false);
+      busy.current = false;
+      ScrollTrigger.refresh();
       markRevealed();
       return;
     }
-    const bands = el.querySelectorAll<HTMLElement>("[data-band]");
-    const label = el.querySelector<HTMLElement>("[data-label]");
-    const tl = gsap.timeline({
-      delay: 0.08,
-      onComplete: () => {
-        gsap.set(el, { visibility: "hidden" });
-        gsap.set(bands, { yPercent: 115 });
-        setBusy(false);
-      },
-    });
-    tl.to(label, { yPercent: -40, autoAlpha: 0, duration: 0.35, ease: "power2.in" }, 0)
-      .to([...bands].reverse(), { yPercent: -125, duration: 0.85, stagger: 0.07, ease: "power3.inOut" }, 0.1)
-      .add(() => markRevealed(), 0.45);
-    tlRef.current = tl;
+    // Le travail lourd de la nouvelle page se fait encore sous le masque : les bandes ne partent qu'après
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+        requestAnimationFrame(() => {
+          const bands = el.querySelectorAll<HTMLElement>("[data-band]");
+          const label = el.querySelector<HTMLElement>("[data-label]");
+          const tl = gsap.timeline({
+            onComplete: () => {
+              gsap.set(el, { visibility: "hidden" });
+              gsap.set(bands, { yPercent: 115 });
+              busy.current = false;
+            },
+          });
+          tl.to(label, { yPercent: -40, autoAlpha: 0, duration: 0.25, ease: "power2.in" }, 0)
+            .to([...bands].reverse(), { yPercent: -125, duration: 0.6, stagger: 0.05, ease: "power3.inOut" }, 0.05)
+            .add(() => markRevealed(), 0.3);
+          tlRef.current = tl;
+        });
+      })
+    );
   }, []);
 
   // Le chemin a changé : on révèle la nouvelle page
   useEffect(() => {
+    currentPath.current = pathname;
     if (pending.current && pending.current.href === pathname) reveal();
     else if (pending.current) {
       // Navigation vers un autre chemin (redirection) : on révèle quand même
@@ -81,16 +92,16 @@ export default function TransitionProvider({ children }: { children: React.React
   const navigate = useCallback(
     (href: string, opts: NavOpts = {}) => {
       const [pathPart, hashPart] = href.split("#");
-      const path = pathPart.split("?")[0] || pathname;
+      const path = pathPart.split("?")[0] || currentPath.current;
       const hash = hashPart ? `#${hashPart}` : undefined;
 
-      if (path === pathname) {
+      if (path === currentPath.current) {
         if (pathPart.includes("?")) router.push(href, { scroll: false });
         else if (hash) scrollToEl(hash, -80);
         else scrollToTop();
         return;
       }
-      if (busy) return;
+      if (busy.current) return;
 
       if (prefersReducedMotion()) {
         router.push(href, { scroll: true });
@@ -99,7 +110,7 @@ export default function TransitionProvider({ children }: { children: React.React
 
       const theme = opts.theme ?? themeFor(path);
       setView({ theme, label: opts.label ?? labelFor(path), image: opts.image });
-      setBusy(true);
+      busy.current = true;
       markCovered();
       router.prefetch(pathPart);
 
@@ -115,20 +126,24 @@ export default function TransitionProvider({ children }: { children: React.React
           onComplete: () => {
             pending.current = { href: path, hash };
             router.push(pathPart || "/", { scroll: false });
-            // Garde-fou : jamais d'écran figé
-            fallback.current = setTimeout(() => pending.current && reveal(), 2500);
+            // Si la page tarde à arriver, le titre respire : l'écran ne paraît pas figé
+            gsap.to(label, { autoAlpha: 0.55, duration: 0.7, delay: 0.4, repeat: -1, yoyo: true, ease: "sine.inOut" });
+            // Garde-fou : jamais d'écran figé, même sur une connexion lente
+            fallback.current = setTimeout(() => pending.current && reveal(), 4000);
           },
         });
-        tl.to(bands, { yPercent: 0, duration: 0.7, stagger: 0.08, ease: "power3.inOut" }).to(
+        tl.to(bands, { yPercent: 0, duration: 0.5, stagger: 0.05, ease: "power3.inOut" }).to(
           label,
-          { yPercent: 0, autoAlpha: 1, duration: 0.45, ease: "power3.out" },
-          "-=0.3"
+          { yPercent: 0, autoAlpha: 1, duration: 0.3, ease: "power3.out" },
+          "-=0.25"
         );
         tlRef.current = tl;
       });
     },
-    [busy, pathname, reveal, router]
+    [reveal, router]
   );
+
+  const ctx = useMemo(() => ({ navigate }), [navigate]);
 
   // Position de départ des couches (hors écran, sous la page)
   useEffect(() => {
@@ -139,7 +154,7 @@ export default function TransitionProvider({ children }: { children: React.React
   const pal = palettes[view.theme];
 
   return (
-    <TransitionCtx.Provider value={{ navigate, busy }}>
+    <TransitionCtx.Provider value={ctx}>
       {children}
       <div
         ref={overlayRef}

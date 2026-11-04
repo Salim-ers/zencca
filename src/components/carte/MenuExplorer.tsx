@@ -1,17 +1,22 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo } from "react";
 import ProductVisual from "./ProductVisual";
 import ProductSheet from "./ProductSheet";
+import SizePrices from "./SizePrices";
 import TempTags from "./TempTags";
 import LayerPill from "@/components/ui/LayerPill";
 import { Arrow } from "@/components/ui/motion";
-import { categories, categoryById, formatPrice, productBySlug, products, type CategoryId, type Product } from "@/data/products";
+import { categories, categoryById, formatPrice, productBySlug, products, supplements, type CategoryId, type Product } from "@/data/products";
 import { SHOW_PRICES } from "@/data/site";
 import { photos } from "@/data/images";
 import { scrollToEl } from "@/lib/lenis";
+import supPerles from "@/assets/photos/supplements/perles.png";
+import supGelee from "@/assets/photos/supplements/gelee-coco.png";
+import supLitchi from "@/assets/photos/supplements/litchi.png";
 import { cn } from "@/lib/utils";
 
 type FilterId = "tout" | "nouveautes" | "signatures" | CategoryId;
@@ -32,13 +37,6 @@ const hoverByCat: Record<CategoryId, string> = {
   "coco-cafe": "group-hover:-translate-y-1.5 group-hover:rotate-[1deg]",
   smoothies: "group-hover:scale-y-[0.97] group-hover:scale-x-[1.02]",
   gourmandises: "group-hover:rotate-[-3deg]",
-};
-
-const sizesLabel = (p: Product) => {
-  if (!p.sizes.length) return null;
-  if (SHOW_PRICES && p.sizes.every((s) => s.price !== undefined))
-    return p.sizes.map((s) => `${s.ml} ml ${formatPrice(s.price!)}`).join("   ");
-  return p.sizes.map((s) => `${s.ml} ml`).join(" ou ");
 };
 
 export default function MenuExplorer() {
@@ -149,7 +147,7 @@ export default function MenuExplorer() {
         <AnimatePresence mode="popLayout" initial={false}>
           {chapters.map((ch) => {
             const cat = ch.cat;
-            const title = cat ? cat.label : (ch as { title: string }).title;
+            const title = cat ? cat.title : (ch as { title: string }).title;
             const intro = cat ? cat.intro : (ch as { intro: string }).intro;
             const [feature, ...rest] = (() => {
               let withPhoto = ch.items.findIndex((p) => p.photo && photos[p.photo].src.width >= 900);
@@ -183,6 +181,7 @@ export default function MenuExplorer() {
                     <h2 id={`ch-${ch.key}`} className="font-display t-h2">
                       {title}
                     </h2>
+                    {cat?.en && <p lang="en" className="mt-1 text-sm opacity-70">{cat.en}</p>}
                     <p className="mt-3 max-w-[30rem]">{intro}</p>
                   </div>
                   {/* bandes de couleur : les couches de l'univers */}
@@ -238,6 +237,31 @@ export default function MenuExplorer() {
             );
           })}
         </AnimatePresence>
+
+        {validActive !== "gourmandises" && (
+          <aside aria-labelledby="supplements-title" className="tuile mt-20 grid grid-cols-1 items-center gap-4 bg-[#f8f7f8] p-7 pt-9 sm:grid-cols-[1fr_auto] sm:gap-10 sm:p-10 lg:mt-28">
+            <div>
+              <h2 id="supplements-title" className="font-display t-h3">
+                {supplements.label}
+              </h2>
+              <p className="mt-3">{supplements.items.join(", ")}</p>
+              <p lang="en" className="mt-2 text-sm text-brun/70">
+                {supplements.en.label} : {supplements.en.items.join(", ")}
+              </p>
+              <p lang="zh" className="font-cjk mt-1 text-sm text-brun/70">
+                {supplements.cjk.label}：{supplements.cjk.items.join("、")}
+              </p>
+            </div>
+            <div className="flex items-center justify-between gap-4 sm:gap-8">
+              <div className="flex items-center gap-1 sm:gap-2" aria-hidden>
+                {[supPerles, supGelee, supLitchi].map((src) => (
+                  <Image key={src.src} src={src} alt="" sizes="96px" className="h-auto w-[4.25rem] mix-blend-multiply sm:w-24" />
+                ))}
+              </div>
+              {SHOW_PRICES && <p className="font-display t-h3 whitespace-nowrap">{formatPrice(supplements.price)}</p>}
+            </div>
+          </aside>
+        )}
       </div>
 
       <ProductSheet product={openProduct} onClose={() => setParams({ boisson: null })} onPrev={() => step(-1)} onNext={() => step(1)} />
@@ -246,7 +270,6 @@ export default function MenuExplorer() {
 }
 
 function ProductText({ p, big }: { p: Product; big?: boolean }) {
-  const sz = sizesLabel(p);
   return (
     <div>
       <div className="flex items-start gap-3">
@@ -261,12 +284,13 @@ function ProductText({ p, big }: { p: Product; big?: boolean }) {
             {p.isNew && <span className="rounded-full bg-enseigne px-2 py-0.5 text-xs font-semibold">Nouveau</span>}
           </div>
           <h3 className={cn("font-display mt-0.5 [text-wrap:balance]", big ? "t-h2" : "text-[1.2rem] leading-[1.08] tracking-tight sm:text-[1.6rem] sm:leading-[1.05]")}>{p.name}</h3>
+          {p.en && <p lang="en" className={cn("text-brun/70", big ? "mt-3 text-sm" : "mt-1 text-xs sm:text-[0.8rem]")}>{p.en}</p>}
         </div>
       </div>
       <p className={cn("mt-2 text-brun sm:mt-3", big ? "t-lead max-w-[28rem]" : "text-[0.9rem] leading-snug sm:text-base sm:leading-relaxed")}>{p.description}</p>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
         <TempTags temps={p.temps} />
-        {sz && <span className="text-[0.8rem] text-brun/80 sm:text-sm">{sz}</span>}
+        <SizePrices product={p} className={big ? "text-base" : "text-[0.85rem] sm:text-[0.95rem]"} />
         <span className="ml-auto inline-flex items-center gap-1 text-sm font-semibold opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100 max-md:hidden">
           Voir la fiche <Arrow />
         </span>

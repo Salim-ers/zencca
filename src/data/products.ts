@@ -4,9 +4,10 @@ import type { PhotoKey } from "./images";
  * ─────────────────────────────────────────────────────────────
  *  LA CARTE ZENCCA
  *  Source : photos de la carte affichée en boutique (deux versions)
- *  + visuel « offre du matin ». Les prix sont recopiés de la carte
- *  mais ne s'affichent que si SHOW_PRICES = true (data/site.ts).
- *  `aValider` signale une information partiellement lisible.
+ *  + visuel « offre du matin ». Prix, codes et noms suivent la version
+ *  aux codes Z1 à Z19. Les boissons présentes uniquement sur l'autre
+ *  version, datée de juin 2026, n'ont pas de code.
+ *  `aValider` signale une information à confirmer.
  * ─────────────────────────────────────────────────────────────
  */
 
@@ -17,6 +18,10 @@ export type CategoryId = "matcha" | "thes" | "fruits" | "lactees" | "coco-cafe" 
 export type Category = {
   id: CategoryId;
   label: string;
+  /** Titre de la section sur le menu */
+  title: string;
+  /** Sous-titre anglais de la section sur le menu */
+  en?: string;
   cjk?: string;
   /** Phrase courte d'introduction */
   intro: string;
@@ -30,6 +35,8 @@ export type CollectionId = "matcha" | "fruity" | "coco-cafe" | "signature";
 
 export type Product = {
   slug: string;
+  /** Repère du menu, dans le triangle au coin de la case */
+  code?: string;
   name: string;
   /** Nom tel qu'écrit sur la carte bilingue */
   cjk?: string;
@@ -50,6 +57,8 @@ export const categories: Category[] = [
   {
     id: "matcha",
     label: "Matcha",
+    title: "Sélection matcha",
+    en: "Matcha selection",
     cjk: "抹茶甄选",
     intro: "Le vert profond du matcha, posé en couche sur le lait, la coco ou le sakura.",
     color: "#a9bd6e",
@@ -60,6 +69,9 @@ export const categories: Category[] = [
   {
     id: "thes",
     label: "Thés frais",
+    title: "Sélection de thé frais",
+    en: "Crisp tea selection",
+    cjk: "清萃鲜茶",
     intro: "Thés glacés, agrumes et fruits : la fraîcheur en version simple.",
     color: "#f0a65a",
     tint: "#fbe2c3",
@@ -69,6 +81,8 @@ export const categories: Category[] = [
   {
     id: "fruits",
     label: "Créations fruitées",
+    title: "Créations fruitées",
+    en: "Fresh fruit blends",
     cjk: "鲜果绵密",
     intro: "Mangue, pomelo, raisin : des couches de fruits frais, généreuses et colorées.",
     color: "#e5707d",
@@ -78,7 +92,10 @@ export const categories: Category[] = [
   },
   {
     id: "lactees",
-    label: "Boissons lactées",
+    label: "Créations lactées",
+    title: "Créations lactées",
+    en: "Creamy blends",
+    cjk: "乳感特调",
     intro: "Thés au lait, perles de tapioca et douceurs onctueuses, chaudes ou glacées.",
     color: "#d4a77a",
     tint: "#f3e3cf",
@@ -88,6 +105,8 @@ export const categories: Category[] = [
   {
     id: "coco-cafe",
     label: "Coco & café",
+    title: "Créations café & coco",
+    en: "Coconut coffee creations",
     cjk: "椰咖特调",
     intro: "Le café rencontre le lait de coco, la pistache et le jasmin.",
     color: "#8a5a3c",
@@ -98,6 +117,8 @@ export const categories: Category[] = [
   {
     id: "smoothies",
     label: "Smoothies au yaourt",
+    title: "Sélection smoothie yaourt",
+    en: "Yogurt delight smoothie",
     cjk: "酸奶轻享",
     intro: "Fruits mixés et yaourt : épais, frais, tout en douceur.",
     color: "#f4c35e",
@@ -108,6 +129,7 @@ export const categories: Category[] = [
   {
     id: "gourmandises",
     label: "À grignoter",
+    title: "À grignoter",
     intro: "Pour accompagner votre boisson.",
     color: "#e2a447",
     tint: "#f8e5c3",
@@ -123,8 +145,10 @@ export const products: Product[] = [
   // ── Matcha
   {
     slug: "matcha-latte",
+    code: "Z5",
     name: "Matcha latte",
     cjk: "抹茶拿铁",
+    en: "Matcha latte",
     category: "matcha",
     description: "Le classique : matcha vert intense posé sur un lait frais.",
     temps: ["chaud", "froid"],
@@ -135,6 +159,7 @@ export const products: Product[] = [
   },
   {
     slug: "eau-coco-matcha",
+    code: "Z6",
     name: "Eau coco matcha",
     cjk: "抹茶香水椰",
     en: "Matcha coconut",
@@ -148,9 +173,10 @@ export const products: Product[] = [
   },
   {
     slug: "sakura-matcha",
+    code: "Z7",
     name: "Sakura matcha",
     cjk: "樱之春",
-    en: "Matcha with coconut milk and sakura",
+    en: "Matcha sakura",
     category: "matcha",
     description: "Matcha au lait de coco et fleur de cerisier : un vert vif sur un rose tendre.",
     temps: ["froid"],
@@ -163,22 +189,26 @@ export const products: Product[] = [
   // ── Thés frais
   {
     slug: "the-oolong-peche",
-    name: "Thé oolong à la pêche",
+    code: "Z11",
+    name: "Thé oolong pêche",
     cjk: "蜜桃乌龙茶",
     en: "Peach oolong tea",
     category: "thes",
     description: "Oolong infusé et pêche, servi bien frais avec une tranche d'agrume.",
+    temps: ["froid"],
     sizes: S(5.9, 6.9),
     photo: "carteOolongPeche",
     layers: ["#e98a2e", "#d4661c"],
   },
   {
     slug: "the-vert-citron-frappe",
+    code: "Z12",
     name: "Thé vert citron frappé",
     cjk: "手打柠檬茶",
     en: "Handmade lemon green tea",
     category: "thes",
     description: "Thé vert et citron frappés à la main, acidulé et désaltérant.",
+    temps: ["froid"],
     sizes: S(5.5, 6.5),
     photo: "carteCitronFrappe",
     layers: ["#f7d65a", "#efb93a"],
@@ -186,78 +216,115 @@ export const products: Product[] = [
 
   // ── Créations fruitées
   {
+    slug: "mango-pomelo-sago",
+    code: "Z8",
+    name: "Mango pomelo sago",
+    cjk: "杨枝甘露",
+    en: "Mango pomelo sago",
+    category: "fruits",
+    description: "Mangue, pomelo et perles de sagou : un grand classique, onctueux et fruité.",
+    temps: ["froid"],
+    sizes: S(7.8, 8.8),
+    photo: "carteMangoPomelo",
+    layers: ["#fbf0da", "#f4a63c", "#f7c25c"],
+  },
+  {
+    slug: "mango-coco-bleu",
+    code: "Z9",
+    name: "Mango coco bleu",
+    cjk: "茫茫椰海",
+    en: "Mango blue coco",
+    category: "fruits",
+    description: "Une couche bleu pastel, de la coco et de la mangue : la plus photogénique.",
+    temps: ["froid"],
+    sizes: S(7.3, 8.3),
+    photo: "carteMangoCocoBleu",
+    layers: ["#8fb8dc", "#f5f1e8", "#f3be4a"],
+    aValider: "Nom chinois écrit 茫茫椰海 sur le menu Z1-Z19 et 芒芒椰海 sur celui de juin 2026.",
+  },
+  {
     slug: "the-au-raisin-frais",
+    code: "Z10",
     name: "Thé au raisin frais",
     cjk: "多肉葡萄",
     en: "Fresh grape tea",
     category: "fruits",
     description: "Granité de raisin rouge marbré au-dessus d'une pulpe de raisin frais.",
     temps: ["froid"],
-    sizes: S(),
+    sizes: S(7.5, 8.5),
     signature: true,
     photo: "carteRaisinFrais",
     layers: ["#f6efe4", "#b8344a", "#e4b94a"],
-    aValider: "Prix non lisibles sur la carte.",
-  },
-  {
-    slug: "mango-pomelo-sago",
-    name: "Mango pomelo sago",
-    cjk: "杨枝甘露",
-    category: "fruits",
-    description: "Mangue, pomelo et perles de sagou : un grand classique, onctueux et fruité.",
-    temps: ["froid"],
-    sizes: S(),
-    photo: "carteMangoPomelo",
-    layers: ["#fbf0da", "#f4a63c", "#f7c25c"],
-    aValider: "Prix non lisibles sur la carte.",
-  },
-  {
-    slug: "mango-coco-bleu",
-    name: "Mango coco bleu",
-    en: "Mango blue coco",
-    category: "fruits",
-    description: "Une couche bleu pastel, de la coco et de la mangue : la plus photogénique.",
-    temps: ["froid"],
-    sizes: S(),
-    photo: "carteMangoCocoBleu",
-    layers: ["#8fb8dc", "#f5f1e8", "#f3be4a"],
-    aValider: "Prix non lisibles sur la carte.",
   },
 
-  // ── Boissons lactées
+  // ── Créations lactées
   {
-    slug: "the-au-lait-signature",
-    name: "Thé au lait signature",
-    en: "Signature milk tea",
+    slug: "the-au-lait-bleu-jasmin",
+    code: "Z1",
+    name: "Thé au lait bleu jasmin",
+    cjk: "茉莉奶蓝",
+    en: "Jasmine bleu milk tea",
     category: "lactees",
-    description: "Le thé au lait de la maison, rond et réconfortant.",
-    sizes: S(6.5, 7.5),
-    signature: true,
-    photo: "carteTheAuLait",
-    layers: ["#d9b58c", "#c89a6a"],
-    aValider: "Nom partiellement visible sur la carte. Gobelet non visible non plus : visuel à comparer à la vraie boisson.",
+    description: "Thé au lait parfumé au jasmin, d'un bleu tout en douceur.",
+    temps: ["chaud", "froid"],
+    sizes: S(6, 7),
+    isNew: true,
+    photo: "carteBleuJasmin",
+    layers: ["#a9d0e6", "#bcdcee"],
   },
   {
     slug: "latte-pistache",
+    code: "Z2",
     name: "Latte pistache",
+    cjk: "开心果拿铁",
+    en: "Pistachio latte",
     category: "lactees",
-    description: "Crème de pistache et lait, parsemé d'éclats de pistache.",
+    description: "Crème de pistache posée sur un lait frais, chaud ou glacé.",
+    temps: ["chaud", "froid"],
     sizes: S(7, 8),
+    isNew: true,
     photo: "carteLattePistache",
-    layers: ["#e6dcae", "#f4f0e2"],
-    aValider: "Nom et prix partiellement visibles sur la carte.",
+    layers: ["#cdb18a", "#f4f0e2"],
+  },
+  {
+    slug: "the-au-lait-signature",
+    code: "Z3",
+    name: "Thé au lait signature",
+    cjk: "招牌奶茶",
+    en: "Signature milk tea",
+    category: "lactees",
+    description: "Le thé au lait de la maison, rond et réconfortant.",
+    temps: ["chaud", "froid"],
+    sizes: S(6.5, 7.5),
+    signature: true,
+    photo: "carteLaitPerles",
+    layers: ["#d9b58c", "#c89a6a"],
   },
   {
     slug: "lait-perles-sucre-brun",
+    code: "Z4",
     name: "Lait frais aux perles de tapioca, sucre brun",
     cjk: "黑糖珍珠鲜牛乳",
-    en: "Brown sugar pearl fresh milk",
+    en: "Fresh milk brown sugar",
     category: "lactees",
     description: "Lait frais, perles de tapioca et sirop de sucre brun.",
     temps: ["chaud", "froid"],
     sizes: S(6.5, 7.5),
     photo: "carteLaitPerles",
     layers: ["#8a5226", "#efe2cf", "#3a2216"],
+  },
+  {
+    slug: "lait-the-yingjiu",
+    name: "Lait frais au thé Yingjiu",
+    cjk: "英九鲜牛乳",
+    en: "Fresh milk Yingjiu tea",
+    category: "lactees",
+    description: "Lait frais et thé Yingjiu, chaud ou glacé.",
+    temps: ["chaud", "froid"],
+    sizes: S(6.5, 7.5),
+    photo: "carteLaitPerles",
+    layers: ["#d9b58c", "#efe2cf"],
+    aValider: "Uniquement sur le menu de juin 2026, absent du menu Z1-Z19 : à confirmer.",
   },
   {
     slug: "chocolat-chaud",
@@ -273,19 +340,8 @@ export const products: Product[] = [
 
   // ── Coco & café
   {
-    slug: "taro-coco-creme",
-    name: "Taro coco crème",
-    cjk: "芋泥厚椰乳",
-    en: "Taro coconut cream foam",
-    category: "coco-cafe",
-    description: "Purée de taro violette et lait de coco épais, coiffés d'une mousse.",
-    sizes: S(6.5, 7.5),
-    signature: true,
-    photo: "carteTaroCoco",
-    layers: ["#c9b3de", "#f2ecf3", "#e7dcef"],
-  },
-  {
     slug: "pistache-jasmin-coco",
+    code: "Z15",
     name: "Pistache jasmin coco",
     cjk: "开心果茉莉椰",
     en: "Pistachio jasmine coconut",
@@ -299,6 +355,7 @@ export const products: Product[] = [
   },
   {
     slug: "cafe-latte-pistache",
+    code: "Z16",
     name: "Café latte pistache",
     cjk: "开心果咖啡拿铁",
     en: "Coffee pistachio latte",
@@ -313,8 +370,10 @@ export const products: Product[] = [
   },
   {
     slug: "coco-americano",
-    name: "Coco americano",
+    code: "Z17",
+    name: "Coco américano",
     cjk: "椰香美式",
+    en: "Coco americano",
     category: "coco-cafe",
     description: "Un americano allongé à l'eau de coco, sur glace.",
     temps: ["froid"],
@@ -325,6 +384,7 @@ export const products: Product[] = [
   },
   {
     slug: "coco-latte",
+    code: "Z18",
     name: "Coco latte",
     cjk: "厚椰乳拿铁",
     en: "Coconut latte",
@@ -335,12 +395,28 @@ export const products: Product[] = [
     photo: "carteCocoLatte",
     layers: ["#6b3a1e", "#c68e5c", "#f6f1e6"],
   },
+  {
+    slug: "taro-coco-creme",
+    code: "Z19",
+    name: "Taro coco",
+    cjk: "芋泥厚椰乳",
+    en: "Taro coconut cream foam",
+    category: "coco-cafe",
+    description: "Purée de taro violette et lait de coco épais, coiffés d'une mousse.",
+    temps: ["froid"],
+    sizes: S(6.5, 7.5),
+    signature: true,
+    photo: "carteTaroCoco",
+    layers: ["#c9b3de", "#f2ecf3", "#e7dcef"],
+  },
 
   // ── Smoothies
   {
     slug: "smoothie-mangue-yaourt",
+    code: "Z13",
     name: "Smoothie mangue yaourt",
     cjk: "芒果酸奶昔",
+    en: "Mango yogurt smoothie",
     category: "smoothies",
     description: "Mangue mixée et yaourt, épais et solaire.",
     temps: ["froid"],
@@ -350,8 +426,10 @@ export const products: Product[] = [
   },
   {
     slug: "smoothie-peche-yaourt",
+    code: "Z14",
     name: "Smoothie pêche yaourt",
     cjk: "蜜桃酸奶昔",
+    en: "Peach yogurt smoothie",
     category: "smoothies",
     description: "Pêche et yaourt marbrés de rose pâle.",
     temps: ["froid"],
@@ -369,6 +447,7 @@ export const products: Product[] = [
     sizes: S(7.5, 8.5),
     photo: "carteSmoothieAvocat",
     layers: ["#9fbf5a", "#eef2dc", "#b7cf7c"],
+    aValider: "Uniquement sur le menu de juin 2026, absent du menu Z1-Z19 : à confirmer.",
   },
 
   // ── À grignoter
@@ -387,6 +466,8 @@ export const products: Product[] = [
 export const supplements = {
   label: "Suppléments",
   items: ["Perles de tapioca", "Gelée de coco", "Perles éclatantes au litchi"],
+  en: { label: "Add-on options", items: ["Pearls", "Coconut jelly", "Lychee popping boba"] },
+  cjk: { label: "加购选项", items: ["珍珠", "椰果", "荔枝爆爆珠"] },
   price: 0.5,
 };
 

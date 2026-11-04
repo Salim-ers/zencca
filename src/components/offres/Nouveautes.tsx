@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import ProductVisual from "@/components/carte/ProductVisual";
+import SizePrices from "@/components/carte/SizePrices";
 import TempTags from "@/components/carte/TempTags";
 import TransitionLink from "@/components/transition/TransitionLink";
 import LayerPill from "@/components/ui/LayerPill";
@@ -30,7 +31,7 @@ export default function Nouveautes({ offers, drafts }: { offers: Offer[]; drafts
               className="group mt-16 grid grid-cols-1 items-center gap-8 md:grid-cols-12 md:gap-12"
             >
               <div className="relative mx-auto w-[80%] max-w-[26rem] md:col-span-5 md:w-full">
-                <span className="absolute -left-2 -top-3 z-10 rotate-[-6deg] rounded-full bg-enseigne px-4 py-1.5 text-sm font-semibold text-encre shadow-sm transition-transform duration-500 group-hover:rotate-0">
+                <span className="absolute -right-2 -top-3 z-10 rotate-[6deg] rounded-full bg-enseigne px-4 py-1.5 text-sm font-semibold text-encre shadow-sm transition-transform duration-500 group-hover:rotate-0">
                   Nouveau
                 </span>
                 <ProductVisual product={feature} sizes="(min-width: 768px) 30vw, 80vw" className="aspect-[3/4] w-full" />
@@ -45,7 +46,7 @@ export default function Nouveautes({ offers, drafts }: { offers: Offer[]; drafts
               <li key={p.slug} className={cn(i % 3 === 1 && "lg:mt-16", i % 3 === 2 && "lg:mt-6")}>
                 <TransitionLink href={`/la-carte?boisson=${p.slug}`} theme="matcha" transitionLabel={p.name} className="group block">
                   <div className="relative">
-                    <span className="absolute -left-2 -top-3 z-10 rotate-[-6deg] rounded-full bg-enseigne px-4 py-1.5 text-sm font-semibold text-encre shadow-sm transition-transform duration-500 group-hover:rotate-0">
+                    <span className="absolute -right-2 -top-3 z-10 rotate-[6deg] rounded-full bg-enseigne px-4 py-1.5 text-sm font-semibold text-encre shadow-sm transition-transform duration-500 group-hover:rotate-0">
                       Nouveau
                     </span>
                     <ProductVisual product={p} sizes="(min-width: 1024px) 28vw, (min-width: 640px) 44vw, 92vw" className="aspect-[4/5] w-full" />
@@ -132,8 +133,9 @@ function NewsText({ p, big }: { p: Product; big?: boolean }) {
         </p>
         <h3 className={cn("font-display", big ? "t-h2" : "t-h3")}>{p.name}</h3>
         <p className={cn("mt-2 max-w-[28rem] text-brun", big && "t-lead mt-4")}>{p.description}</p>
-        <div className="mt-4 flex items-center gap-4">
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
           <TempTags temps={p.temps} />
+          <SizePrices product={p} className="text-[0.95rem]" />
           <span className="inline-flex items-center gap-1 font-semibold">
             <span className="link-infuse group-hover:[background-size:100%_1.5px]">Voir la fiche</span> <Arrow />
           </span>

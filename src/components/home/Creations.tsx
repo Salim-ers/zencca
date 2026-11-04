@@ -6,6 +6,7 @@ import { Arrow, InfuseImage, Parallax, RevealText } from "@/components/ui/motion
 import { photos, type PhotoKey } from "@/data/images";
 import { productBySlug } from "@/data/products";
 import { cn } from "@/lib/utils";
+import SizePrices from "@/components/carte/SizePrices";
 import TempTags from "@/components/carte/TempTags";
 import LayerPill from "@/components/ui/LayerPill";
 
@@ -118,8 +119,9 @@ export default function Creations() {
                       </div>
                     </div>
                     <p className="mt-3 text-brun">{prod.description}</p>
-                    <div className={cn("mt-4 flex items-center gap-4", p.align === "right" && "lg:justify-end")}>
+                    <div className={cn("mt-4 flex flex-wrap items-center gap-x-4 gap-y-2", p.align === "right" && "lg:justify-end")}>
                       <TempTags temps={prod.temps} />
+                      <SizePrices product={prod} className="text-[0.95rem]" />
                       <span className="inline-flex items-center gap-1.5 font-semibold">
                         <span className="link-infuse group-hover:[background-size:100%_1.5px]">Voir la boisson</span>
                         <Arrow />

@@ -33,7 +33,7 @@ import carteCitronFrappe from "@/assets/photos/carte/the-vert-citron-frappe.jpg"
 import carteRaisinFrais from "@/assets/photos/carte/the-au-raisin-frais.jpg";
 import carteMangoPomelo from "@/assets/photos/carte/mango-pomelo-sago.jpg";
 import carteMangoCocoBleu from "@/assets/photos/carte/mango-coco-bleu.jpg";
-import carteTheAuLait from "@/assets/photos/carte/the-au-lait-signature.jpg";
+import carteBleuJasmin from "@/assets/photos/carte/the-au-lait-bleu-jasmin.jpg";
 import carteLattePistache from "@/assets/photos/carte/latte-pistache.jpg";
 import carteLaitPerles from "@/assets/photos/carte/lait-perles-sucre-brun.jpg";
 import carteChocolatChaud from "@/assets/photos/carte/chocolat-chaud.jpg";
@@ -150,16 +150,16 @@ export const photos = {
   carteMatchaLatte: { src: carteMatchaLatte, alt: "Matcha latte Zencca : matcha vert intense qui se fond dans le lait, gobelet transparent", focus: "50% 50%" },
   carteEauCocoMatcha: { src: carteEauCocoMatcha, alt: "Eau coco matcha Zencca : matcha vert sur eau de coco glacée, gobelet transparent", focus: "50% 50%" },
   carteSakuraMatcha: { src: carteSakuraMatcha, alt: "Sakura matcha Zencca : couche de matcha vert sur lait de coco rose, gobelet transparent", focus: "50% 50%" },
-  carteOolongPeche: { src: carteOolongPeche, alt: "Thé oolong à la pêche Zencca : thé orangé glacé, tranches d'orange contre la paroi", focus: "50% 50%" },
+  carteOolongPeche: { src: carteOolongPeche, alt: "Thé oolong pêche Zencca : thé orangé glacé, tranches d'orange contre la paroi", focus: "50% 50%" },
   carteCitronFrappe: { src: carteCitronFrappe, alt: "Thé vert citron frappé Zencca : thé doré, glaçons et quartier de citron", focus: "50% 50%" },
   carteRaisinFrais: { src: carteRaisinFrais, alt: "Thé au raisin frais Zencca : crème blanche, granité de raisin rouge et pulpe jaune", focus: "50% 50%" },
   carteMangoPomelo: { src: carteMangoPomelo, alt: "Mango pomelo sago Zencca : crème de coco, pomelo rose, perles de sagou et mangue", focus: "50% 50%" },
   carteMangoCocoBleu: { src: carteMangoCocoBleu, alt: "Mango coco bleu Zencca : couche bleu ciel, coco blanche et mangue jaune", focus: "50% 50%" },
-  carteTheAuLait: { src: carteTheAuLait, alt: "Thé au lait signature Zencca : thé au lait caramel et glaçons, gobelet transparent", focus: "50% 50%" },
-  carteLattePistache: { src: carteLattePistache, alt: "Latte pistache Zencca : crème de pistache parsemée d'éclats, sur lait blanc", focus: "50% 50%" },
+  carteBleuJasmin: { src: carteBleuJasmin, alt: "Thé au lait bleu jasmin Zencca : thé au lait bleu pâle et glaçons, gobelet transparent", focus: "50% 50%" },
+  carteLattePistache: { src: carteLattePistache, alt: "Latte pistache Zencca : crème de pistache beige fondant dans un lait blanc", focus: "50% 50%" },
   carteLaitPerles: { src: carteLaitPerles, alt: "Les deux gobelets chauds illustrés Zencca : femme au perroquet rouge et grue dans les bambous", focus: "50% 50%" },
   carteChocolatChaud: { src: carteChocolatChaud, alt: "Chocolat chaud Zencca dans le gobelet illustré d'une grue et de bambous", focus: "50% 50%" },
-  carteTaroCoco: { src: carteTaroCoco, alt: "Taro coco crème Zencca : crème de taro violette marbrant un lait de coco blanc", focus: "50% 50%" },
+  carteTaroCoco: { src: carteTaroCoco, alt: "Taro coco Zencca : crème de taro violette marbrant un lait de coco blanc", focus: "50% 50%" },
   cartePistacheJasmin: { src: cartePistacheJasmin, alt: "Pistache jasmin coco Zencca : mousse beige mouchetée sur thé au jasmin doré", focus: "50% 50%" },
   carteCafePistache: { src: carteCafePistache, alt: "Café latte pistache Zencca : crème de pistache, café caramel et lait", focus: "50% 50%" },
   carteCocoAmericano: { src: carteCocoAmericano, alt: "Coco americano Zencca : café ambré sur glaçons et eau de coco claire", focus: "50% 50%" },

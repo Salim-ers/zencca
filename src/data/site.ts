@@ -80,8 +80,8 @@ export const hours: { day: number; label: string; open: string | null; close: st
 ];
 export const hoursSource = "Fiche Google, relevé du 04/11/2026 — à confirmer";
 
-/** Affichage des prix : passer à `true` uniquement après validation de la carte officielle. */
-export const SHOW_PRICES = false;
+/** Affichage des prix, recopiés du menu. Une boisson sans prix lisible n'affiche que ses formats. */
+export const SHOW_PRICES = true;
 
 /** Afficher les offres en brouillon (aperçu interne) : NEXT_PUBLIC_PREVIEW_DRAFTS=true */
 export const PREVIEW_DRAFTS = process.env.NEXT_PUBLIC_PREVIEW_DRAFTS === "true";

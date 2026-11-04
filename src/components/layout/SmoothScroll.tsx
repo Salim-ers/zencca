@@ -22,7 +22,8 @@ export default function SmoothScroll() {
     lenis.on("scroll", ScrollTrigger.update);
     const tick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
+    // Après un blocage, les animations reprennent en douceur au lieu de sauter d'un coup
+    gsap.ticker.lagSmoothing(200, 33);
     return () => {
       gsap.ticker.remove(tick);
       lenis.destroy();
