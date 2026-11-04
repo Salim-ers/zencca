@@ -48,6 +48,8 @@ src/
   app/                 routes (accueil, la-carte, notre-univers, galerie, nouveautes, nous-trouver),
                        sitemap, robots, manifest, icônes
   assets/photos/       photographies fournies (optimisées à la volée par next/image)
+    carte/             visuels des boissons générés par IA d'après le menu en boutique (même cadrage, même fond)
+    comptoir/          les mêmes gobelets détourés, pour le hero de l'accueil
   components/
     brand/             logo vectorisé (tracé fidèle du PNG fourni) + mascotte animée
     layout/            header, menu mobile, footer, écran d'intro, barre d'action mobile
@@ -67,4 +69,4 @@ src/
 
 ## Informations à valider avant mise en ligne
 
-Voir les champs `aValider` dans `src/data/`. En résumé : prix, offre du matin, horaires (relevés sur la fiche Google), coordonnées GPS, stations de métro, association de certaines photos à des boissons, lien vers zencca.com, URL définitive du site.
+Voir les champs `aValider` dans `src/data/`. En résumé : prix, offre du matin, horaires (relevés sur la fiche Google), coordonnées GPS, stations de métro, fidélité des visuels de `carte/` aux vraies boissons, lien vers zencca.com, URL définitive du site.

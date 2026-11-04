@@ -1,22 +1,41 @@
 "use client";
 
+import Image, { type StaticImageData } from "next/image";
 import { useRef } from "react";
 import Mascot from "@/components/brand/Mascot";
 import TransitionLink from "@/components/transition/TransitionLink";
-import { Arrow, InfuseImage, Magnetic, RevealText } from "@/components/ui/motion";
-import { ArchLines, CocoChunk, Leaf, Pearl, Petal, Powder } from "@/components/ui/Ingredients";
-import { StrataDivider } from "@/components/ui/Strata";
-import { photos } from "@/data/images";
+import { Arrow, Magnetic, RevealText } from "@/components/ui/motion";
+import { productBySlug } from "@/data/products";
 import { site } from "@/data/site";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { onReveal } from "@/lib/ready";
-import { isTouch, prefersReducedMotion } from "@/lib/utils";
+import { cn, isTouch, prefersReducedMotion } from "@/lib/utils";
+
+import avocat from "@/assets/photos/comptoir/smoothie-avocat-yaourt.webp";
+import taro from "@/assets/photos/comptoir/taro-coco-creme.webp";
+import americano from "@/assets/photos/comptoir/coco-americano.webp";
+import raisin from "@/assets/photos/comptoir/the-au-raisin-frais.webp";
+import bleu from "@/assets/photos/comptoir/mango-coco-bleu.webp";
+import cocoLatte from "@/assets/photos/comptoir/coco-latte.webp";
+import sakura from "@/assets/photos/comptoir/sakura-matcha.webp";
+
+const CUPS: { slug: string; src: StaticImageData }[] = [
+  { slug: "smoothie-avocat-yaourt", src: avocat },
+  { slug: "taro-coco-creme", src: taro },
+  { slug: "coco-americano", src: americano },
+  { slug: "the-au-raisin-frais", src: raisin },
+  { slug: "mango-coco-bleu", src: bleu },
+  { slug: "coco-latte", src: cocoLatte },
+  { slug: "sakura-matcha", src: sakura },
+];
+const MID = (CUPS.length - 1) / 2;
 
 /**
- * HERO — « tableau éditorial vivant »
- * Le titre s'enroule autour d'une grande arche (les niches de la boutique),
- * qui se remplit de bas en haut comme un gobelet. Les ingrédients flottent
- * en profondeur et répondent au pointeur.
+ * HERO — « le comptoir »
+ * La boutique en coupe : le mur ocre et le néon en titre, la gamme alignée sur
+ * le comptoir en terrazzo, et le store prune de la façade comme socle.
+ * Les gobelets se lèvent au passage du pointeur et s'enfoncent derrière le
+ * comptoir au défilement. Chacun ouvre la fiche de sa boisson.
  */
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -24,59 +43,59 @@ export default function Hero() {
   useGSAP(
     () => {
       const q = gsap.utils.selector(root);
-      const reduced = prefersReducedMotion();
-      if (reduced) return;
+      if (prefersReducedMotion()) return;
 
-      gsap.set(q("[data-arch-line]"), { strokeDashoffset: 1 });
-      gsap.set(q("[data-float]"), { scale: 0, rotate: -40 });
-      gsap.set(q("[data-peek]"), { yPercent: 70 });
-      gsap.set(q("[data-fade]"), { autoAlpha: 0, y: 18 });
+      gsap.set(q("[data-rise]"), { yPercent: 115 });
+      gsap.set(q("[data-peek]"), { yPercent: 60 });
+      gsap.set(q("[data-counter]"), { yPercent: 100 });
+      gsap.set(q("[data-fade]"), { autoAlpha: 0, y: 14 });
 
       const off = onReveal(() => {
         gsap.set(q("[data-enter]"), { visibility: "visible" });
-        const tl = gsap.timeline({ defaults: { ease: "expo.out" } });
-        tl.to(q("[data-arch-line]"), { strokeDashoffset: 0, duration: 2, stagger: 0.12, ease: "power2.inOut" }, 0.2)
-          .to(q("[data-float]"), { scale: 1, rotate: 0, duration: 1.2, stagger: 0.07, ease: "back.out(1.8)" }, 0.75)
-          .to(q("[data-peek]"), { yPercent: 0, duration: 1.1, ease: "back.out(1.5)" }, 1.05)
-          .to(q("[data-fade]"), { autoAlpha: 1, y: 0, duration: 1, stagger: 0.08 }, 0.7);
+        gsap
+          .timeline({ defaults: { ease: "expo.out" } })
+          .to(q("[data-counter]"), { yPercent: 0, duration: 1.1 }, 0)
+          .to(q("[data-rise]"), { yPercent: 0, duration: 1.15, stagger: { each: 0.06, from: "center" }, ease: "back.out(1.25)" }, 0.25)
+          .to(q("[data-peek]"), { yPercent: 0, duration: 0.9, ease: "back.out(1.6)" }, 1.15)
+          .to(q("[data-fade]"), { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.75);
       });
 
-      // Profondeur au pointeur (desktop)
+      // Les gobelets proches du pointeur se soulèvent, comme une vague le long du comptoir
       let cleanupPointer = () => {};
-      if (!isTouch()) {
-        const layers = q("[data-depth]").map((el) => ({
-          d: Number((el as HTMLElement).dataset.depth),
-          x: gsap.quickTo(el, "x", { duration: 1.2, ease: "power3.out" }),
-          y: gsap.quickTo(el, "y", { duration: 1.2, ease: "power3.out" }),
+      const row = q<HTMLElement>("[data-row]")[0];
+      if (!isTouch() && row) {
+        const lifts = q<HTMLElement>("[data-lift]").map((el) => ({
+          el,
+          to: gsap.quickTo(el, "y", { duration: 0.7, ease: "power3.out" }),
         }));
         const move = (e: PointerEvent) => {
-          const nx = e.clientX / window.innerWidth - 0.5;
-          const ny = e.clientY / window.innerHeight - 0.5;
-          layers.forEach((l) => {
-            l.x(nx * l.d * 60);
-            l.y(ny * l.d * 40);
+          lifts.forEach(({ el, to }) => {
+            const r = el.getBoundingClientRect();
+            const d = (e.clientX - (r.left + r.width / 2)) / (r.width * 1.05);
+            to(-Math.exp(-d * d) * r.height * 0.075);
           });
         };
-        root.current!.addEventListener("pointermove", move);
-        cleanupPointer = () => root.current?.removeEventListener("pointermove", move);
+        const leave = () => lifts.forEach(({ to }) => to(0));
+        row.addEventListener("pointermove", move);
+        row.addEventListener("pointerleave", leave);
+        cleanupPointer = () => {
+          row.removeEventListener("pointermove", move);
+          row.removeEventListener("pointerleave", leave);
+        };
       }
 
-      // Sortie au défilement : l'arche s'éloigne, le titre glisse
+      // Au défilement : le titre s'éloigne, les gobelets s'enfoncent derrière le comptoir
       gsap.to(q("[data-scroll-title]"), {
-        yPercent: -18,
+        yPercent: -22,
         ease: "none",
         scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
       });
-      gsap.to(q("[data-scroll-arch]"), {
-        yPercent: 10,
-        scale: 0.94,
-        ease: "none",
-        scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
-      });
-      gsap.to(q("[data-scroll-small]"), {
-        yPercent: -40,
-        ease: "none",
-        scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+      q<HTMLElement>("[data-sink]").forEach((el) => {
+        gsap.to(el, {
+          yPercent: 16 + Number(el.dataset.sink) * 9,
+          ease: "none",
+          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
+        });
       });
 
       return () => {
@@ -88,125 +107,126 @@ export default function Hero() {
   );
 
   return (
-    <section ref={root} data-tint="#fdf6ea" aria-labelledby="hero-title" className="relative overflow-hidden bg-creme">
-      <div className="wrap relative grid min-h-[100svh] grid-cols-1 items-center gap-y-10 pb-28 pt-28 lg:grid-cols-12 lg:gap-x-8 lg:pb-32 lg:pt-32">
-        {/* Colonne texte */}
-        <div data-scroll-title className="relative z-10 lg:col-span-7 lg:pr-4">
+    <section
+      ref={root}
+      data-tint="#f1d29b"
+      aria-labelledby="hero-title"
+      className="comptoir relative flex min-h-[100svh] flex-col overflow-hidden bg-ocre"
+    >
+      {/* Le mur et le néon */}
+      <div className="wrap relative z-10 flex flex-1 items-center justify-center pb-4 pt-[5.25rem] lg:pt-[5.5rem]">
+        <div data-scroll-title>
           <RevealText
             as="h1"
             id="hero-title"
             trigger="reveal"
             delay={0.15}
-            className="font-display t-hero text-encre"
-            lines={["Une rencontre", "infusée", "dans le thé."]}
-            lineClassName={["", "pl-[0.9em]", "pl-[0.25em]"]}
+            className="font-display t-comptoir text-center text-encre"
+            lines={["Une rencontre infusée", "dans le thé."]}
           />
-          <p className="t-lead measure mt-8 text-brun lg:mt-10">
-            Des créations gourmandes, colorées et pleines de douceur, au cœur de Paris.
-          </p>
-          <div data-fade data-enter className="mt-8 flex flex-wrap gap-3">
-            <Magnetic>
-              <TransitionLink href="/la-carte" className="btn">
-                Découvrir la carte <Arrow />
-              </TransitionLink>
-            </Magnetic>
-            <Magnetic>
-              <TransitionLink href="/nous-trouver" className="btn btn-ghost" style={{ ["--btn-fill" as string]: "#ffd21f" }}>
-                Nous rendre visite
-              </TransitionLink>
-            </Magnetic>
-          </div>
-          <p data-fade data-enter className="mt-8 flex items-center gap-2.5 text-[0.95rem] text-brun">
-            <Pearl className="h-3 w-3" />
-            {site.address.street}, {site.address.district}
-          </p>
         </div>
-
-        {/* Composition photographique */}
-        <div className="relative mx-auto w-full max-w-[34rem] lg:col-span-5 lg:max-w-none">
-          <div data-scroll-arch className="relative mx-auto mt-14 aspect-[3/4.1] w-[78%] sm:w-[66%] lg:mt-16 lg:w-[94%] 3xl:w-[88%]">
-            <div className="absolute -inset-x-[9%] -top-[6%] bottom-[-3%]" data-depth="0.25">
-              <ArchLines className="h-full w-full" color="#5f7232" />
-            </div>
-            {/* La mascotte jette un œil par-dessus l'arche */}
-            <div className="absolute -top-[12.5%] left-[8%] z-20 w-[28%] overflow-hidden" aria-hidden>
-              <div data-peek data-enter>
-                <Mascot variant="mascot" liquid="#ebbfc6" decorative followPointer />
-              </div>
-            </div>
-            <InfuseImage
-              photo={photos.heroSakuraRue}
-              sizes="(min-width: 1024px) 38vw, 80vw"
-              priority
-              trigger="reveal"
-              delay={0.05}
-              className="absolute inset-0 z-10 shadow-[0_50px_80px_-50px_rgba(77,39,36,0.55)]"
-              shape="arch"
-            />
-          </div>
-
-          {/* Petite arche : eau coco matcha */}
-          <div
-            data-scroll-small
-            className="absolute -bottom-[4%] -left-[2%] z-20 aspect-[3/4] w-[36%] sm:left-[4%] lg:-left-[16%] lg:w-[40%]"
-          >
-            <div data-depth="0.7" className="h-full w-full">
-              <InfuseImage
-                photo={photos.eauCocoMatcha}
-                sizes="(min-width: 1024px) 16vw, 36vw"
-                trigger="reveal"
-                delay={0.45}
-                shape="arch"
-                className="h-full w-full ring-[6px] ring-creme"
-              />
-            </div>
-          </div>
-
-          {/* Ingrédients flottants */}
-          <div className="pointer-events-none absolute inset-0 z-30" aria-hidden>
-            <div data-depth="1.2" className="absolute left-[2%] top-[6%] w-[13%]">
-              <div data-float data-enter>
-                <Petal className="w-full rotate-[-20deg]" />
-              </div>
-            </div>
-            <div data-depth="0.9" className="absolute -right-[2%] top-[40%] w-[16%]">
-              <div data-float data-enter>
-                <Leaf className="w-full" />
-              </div>
-            </div>
-            <div data-depth="1.6" className="absolute bottom-[18%] right-[8%] w-[6%]">
-              <div data-float data-enter>
-                <Pearl className="w-full" />
-              </div>
-            </div>
-            <div data-depth="1.3" className="absolute bottom-[26%] right-[1%] w-[3.5%]">
-              <div data-float data-enter>
-                <Pearl className="w-full" />
-              </div>
-            </div>
-            <div data-depth="0.6" className="absolute -bottom-[3%] right-[22%] w-[24%]">
-              <div data-float data-enter>
-                <Powder className="w-full" />
-              </div>
-            </div>
-            <div data-depth="1.1" className="absolute left-[30%] top-[-4%] w-[11%] max-lg:hidden">
-              <div data-float data-enter>
-                <CocoChunk className="w-full rotate-12" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p
-          aria-hidden
-          data-fade
-          data-enter
-          className="font-cjk vertical-cjk absolute right-[max(0.5rem,calc(var(--gutter)*0.35))] top-28 hidden text-xl text-matcha-fonce/80 md:block lg:top-36 lg:text-2xl"
-        >
-          {site.cjkName}
-        </p>
       </div>
-      <StrataDivider layers={["#ebbfc6", "#a9bd6e"]} to="#fdf6ea" className="absolute inset-x-0 bottom-0" />
+
+      {/* La gamme, alignée sur le comptoir */}
+      <ul
+        data-row
+        aria-label="Quelques boissons de la carte"
+        className="relative z-20 -mb-[clamp(1.1rem,3.4svh,2.4rem)] flex w-full items-end justify-center pb-2"
+        style={{ clipPath: "inset(-100vh -100vw 0 -100vw)" }}
+      >
+        {CUPS.map((c, i) => {
+          const dist = Math.abs(i - MID);
+          const scale = 1 - dist * 0.065;
+          const product = productBySlug(c.slug)!;
+          return (
+            <li
+              key={c.slug}
+              className={cn("relative shrink-0", dist === 3 && "comptoir-far")}
+              style={{
+                height: `calc(var(--cup-h) * ${scale})`,
+                marginBottom: `${dist * 0.5}svh`,
+                zIndex: 10 - dist,
+              }}
+            >
+              <div data-sink={dist} className="relative h-full">
+                {/* La mascotte passe la tête derrière le dernier gobelet */}
+                {i === CUPS.length - 1 && (
+                  <div className="pointer-events-none absolute bottom-[83%] left-1/2 w-[86%] -translate-x-1/2" aria-hidden>
+                    <div data-peek data-enter>
+                      <Mascot variant="mascot" liquid="#ebbfc6" decorative followPointer />
+                    </div>
+                  </div>
+                )}
+                <div data-rise data-enter className="relative h-full">
+                  <span aria-hidden className="absolute -bottom-[1%] -right-[9%] left-[13%] h-[7%] rounded-[50%] bg-encre/50 blur-[10px]" />
+                  <div data-lift className="relative h-full">
+                    <TransitionLink
+                      href={`/la-carte?boisson=${c.slug}`}
+                      aria-label={`${product.name} : voir la fiche`}
+                      className="group relative block h-full rounded-2xl"
+                    >
+                      <Image
+                        src={c.src}
+                        alt=""
+                        sizes="(min-width: 640px) 18vw, 38vw"
+                        loading="eager"
+                        fetchPriority={dist === 0 ? "high" : "auto"}
+                        draggable={false}
+                        className="block h-full w-auto max-w-none select-none"
+                      />
+                      <span
+                        aria-hidden
+                        className="absolute left-1/2 top-[11%] -translate-x-1/2 whitespace-nowrap rounded-full bg-encre px-3 py-1 text-[0.8rem] font-semibold text-papier opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+                      >
+                        {product.name}
+                      </span>
+                    </TransitionLink>
+                  </div>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div data-counter className="relative z-10">
+        {/* Le plateau en terrazzo */}
+        <div
+          aria-hidden
+          className="terrazzo h-[clamp(2.5rem,6.2svh,4.25rem)] border-t border-white/30 shadow-[inset_0_-12px_16px_-14px_rgba(32,20,9,0.7)]"
+          style={{ ["--terrazzo-bg" as string]: "#74685c", backgroundSize: "260px 260px" }}
+        />
+
+        {/* Le store prune de la façade */}
+        <div className="on-dark bg-store text-papier">
+          <div className="wrap grid grid-cols-1 items-center gap-x-8 gap-y-3 py-5 lg:grid-cols-12 lg:gap-y-0 lg:py-3.5">
+            <div data-fade data-enter className="lg:col-span-4">
+              <p className="flex items-baseline justify-between gap-4">
+                <span className="font-display text-[clamp(1.6rem,2.2vw,2.25rem)] leading-[1.05] tracking-tight">Salon de Thé</span>
+                <span className="font-cjk text-xl lg:hidden" aria-hidden>
+                  {site.cjkName}
+                </span>
+              </p>
+              <TransitionLink href="/nous-trouver" className="link-infuse inline-block text-[0.95rem] text-papier/85 max-lg:mt-1">
+                {site.address.street}, {site.address.district}
+              </TransitionLink>
+            </div>
+            <p data-fade data-enter className="text-[1.0625rem] leading-snug text-papier/90 lg:col-span-4 lg:text-center">
+              Des créations gourmandes, colorées et pleines de douceur, au cœur de Paris.
+            </p>
+            <div data-fade data-enter className="flex items-center gap-6 max-lg:mt-2 lg:col-span-4 lg:justify-end">
+              <span className="font-cjk text-3xl max-lg:hidden" aria-hidden>
+                {site.cjkName}
+              </span>
+              <Magnetic className="max-lg:w-full">
+                <TransitionLink href="/la-carte" className="btn btn-sign max-lg:w-full" style={{ ["--btn-fill" as string]: "#fdf6ea", ["--btn-fg-hover" as string]: "#201409" }}>
+                  Découvrir la carte <Arrow />
+                </TransitionLink>
+              </Magnetic>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

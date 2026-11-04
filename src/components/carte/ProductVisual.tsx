@@ -4,8 +4,8 @@ import { categoryById, type Product } from "@/data/products";
 import { cn } from "@/lib/utils";
 
 /**
- * Visuel produit : la vraie photo si elle existe, sinon une composition
- * graphique des couches de couleur de la boisson (jamais une fausse photo).
+ * Visuel produit : le visuel de la carte s'il existe, sinon une composition
+ * graphique des couches de couleur de la boisson.
  */
 export default function ProductVisual({
   product,

@@ -24,6 +24,28 @@ import pEauCocoMatcha from "@/assets/photos/p-eau-coco-matcha.jpg";
 import pLattePistache from "@/assets/photos/p-latte-pistache.jpg";
 import pEggTart from "@/assets/photos/p-egg-tart.jpg";
 
+// Visuels de la carte : un gobelet par boisson, même cadrage et même fond que le menu en boutique
+import carteMatchaLatte from "@/assets/photos/carte/matcha-latte.jpg";
+import carteEauCocoMatcha from "@/assets/photos/carte/eau-coco-matcha.jpg";
+import carteSakuraMatcha from "@/assets/photos/carte/sakura-matcha.jpg";
+import carteOolongPeche from "@/assets/photos/carte/the-oolong-peche.jpg";
+import carteCitronFrappe from "@/assets/photos/carte/the-vert-citron-frappe.jpg";
+import carteRaisinFrais from "@/assets/photos/carte/the-au-raisin-frais.jpg";
+import carteMangoPomelo from "@/assets/photos/carte/mango-pomelo-sago.jpg";
+import carteMangoCocoBleu from "@/assets/photos/carte/mango-coco-bleu.jpg";
+import carteTheAuLait from "@/assets/photos/carte/the-au-lait-signature.jpg";
+import carteLattePistache from "@/assets/photos/carte/latte-pistache.jpg";
+import carteLaitPerles from "@/assets/photos/carte/lait-perles-sucre-brun.jpg";
+import carteChocolatChaud from "@/assets/photos/carte/chocolat-chaud.jpg";
+import carteTaroCoco from "@/assets/photos/carte/taro-coco-creme.jpg";
+import cartePistacheJasmin from "@/assets/photos/carte/pistache-jasmin-coco.jpg";
+import carteCafePistache from "@/assets/photos/carte/cafe-latte-pistache.jpg";
+import carteCocoAmericano from "@/assets/photos/carte/coco-americano.jpg";
+import carteCocoLatte from "@/assets/photos/carte/coco-latte.jpg";
+import carteSmoothieMangue from "@/assets/photos/carte/smoothie-mangue-yaourt.jpg";
+import carteSmoothiePeche from "@/assets/photos/carte/smoothie-peche-yaourt.jpg";
+import carteSmoothieAvocat from "@/assets/photos/carte/smoothie-avocat-yaourt.jpg";
+
 export type Photo = {
   src: StaticImageData;
   alt: string;
@@ -125,6 +147,26 @@ export const photos = {
   pEauCocoMatcha: { src: pEauCocoMatcha, alt: "Eau coco matcha Zencca", focus: "50% 50%" },
   pLattePistache: { src: pLattePistache, alt: "Latte pistache Zencca parsemé d'éclats de pistache", focus: "50% 50%" },
   pEggTart: { src: pEggTart, alt: "Egg tart dorée servie chez Zencca", focus: "50% 50%" },
+  carteMatchaLatte: { src: carteMatchaLatte, alt: "Matcha latte Zencca : matcha vert intense qui se fond dans le lait, gobelet transparent", focus: "50% 50%" },
+  carteEauCocoMatcha: { src: carteEauCocoMatcha, alt: "Eau coco matcha Zencca : matcha vert sur eau de coco glacée, gobelet transparent", focus: "50% 50%" },
+  carteSakuraMatcha: { src: carteSakuraMatcha, alt: "Sakura matcha Zencca : couche de matcha vert sur lait de coco rose, gobelet transparent", focus: "50% 50%" },
+  carteOolongPeche: { src: carteOolongPeche, alt: "Thé oolong à la pêche Zencca : thé orangé glacé, tranches d'orange contre la paroi", focus: "50% 50%" },
+  carteCitronFrappe: { src: carteCitronFrappe, alt: "Thé vert citron frappé Zencca : thé doré, glaçons et quartier de citron", focus: "50% 50%" },
+  carteRaisinFrais: { src: carteRaisinFrais, alt: "Thé au raisin frais Zencca : crème blanche, granité de raisin rouge et pulpe jaune", focus: "50% 50%" },
+  carteMangoPomelo: { src: carteMangoPomelo, alt: "Mango pomelo sago Zencca : crème de coco, pomelo rose, perles de sagou et mangue", focus: "50% 50%" },
+  carteMangoCocoBleu: { src: carteMangoCocoBleu, alt: "Mango coco bleu Zencca : couche bleu ciel, coco blanche et mangue jaune", focus: "50% 50%" },
+  carteTheAuLait: { src: carteTheAuLait, alt: "Thé au lait signature Zencca : thé au lait caramel et glaçons, gobelet transparent", focus: "50% 50%" },
+  carteLattePistache: { src: carteLattePistache, alt: "Latte pistache Zencca : crème de pistache parsemée d'éclats, sur lait blanc", focus: "50% 50%" },
+  carteLaitPerles: { src: carteLaitPerles, alt: "Les deux gobelets chauds illustrés Zencca : femme au perroquet rouge et grue dans les bambous", focus: "50% 50%" },
+  carteChocolatChaud: { src: carteChocolatChaud, alt: "Chocolat chaud Zencca dans le gobelet illustré d'une grue et de bambous", focus: "50% 50%" },
+  carteTaroCoco: { src: carteTaroCoco, alt: "Taro coco crème Zencca : crème de taro violette marbrant un lait de coco blanc", focus: "50% 50%" },
+  cartePistacheJasmin: { src: cartePistacheJasmin, alt: "Pistache jasmin coco Zencca : mousse beige mouchetée sur thé au jasmin doré", focus: "50% 50%" },
+  carteCafePistache: { src: carteCafePistache, alt: "Café latte pistache Zencca : crème de pistache, café caramel et lait", focus: "50% 50%" },
+  carteCocoAmericano: { src: carteCocoAmericano, alt: "Coco americano Zencca : café ambré sur glaçons et eau de coco claire", focus: "50% 50%" },
+  carteCocoLatte: { src: carteCocoLatte, alt: "Coco latte Zencca : expresso sombre posé sur un lait de coco épais", focus: "50% 50%" },
+  carteSmoothieMangue: { src: carteSmoothieMangue, alt: "Smoothie mangue yaourt Zencca : mangue dorée en spirale avec du yaourt blanc", focus: "50% 50%" },
+  carteSmoothiePeche: { src: carteSmoothiePeche, alt: "Smoothie pêche yaourt Zencca : yaourt blanc marbré de pêche rose saumon", focus: "50% 50%" },
+  carteSmoothieAvocat: { src: carteSmoothieAvocat, alt: "Smoothie avocat et yaourt Zencca : rubans d'avocat vert et de yaourt blanc", focus: "50% 50%" },
 } satisfies Record<string, Photo>;
 
 export type PhotoKey = keyof typeof photos;

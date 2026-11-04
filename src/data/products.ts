@@ -130,7 +130,7 @@ export const products: Product[] = [
     temps: ["chaud", "froid"],
     sizes: S(6.5, 7.5),
     isNew: true,
-    photo: "pMatchaLatte",
+    photo: "carteMatchaLatte",
     layers: ["#7f9a3a", "#a9bd6e", "#f4f0e4"],
   },
   {
@@ -143,7 +143,7 @@ export const products: Product[] = [
     temps: ["froid"],
     sizes: S(6.9, 7.9),
     signature: true,
-    photo: "eauCocoMatcha",
+    photo: "carteEauCocoMatcha",
     layers: ["#8fab47", "#bcd08a", "#eef2dc"],
   },
   {
@@ -156,7 +156,7 @@ export const products: Product[] = [
     temps: ["froid"],
     sizes: S(7.5, 8.5),
     signature: true,
-    photo: "heroSakuraRue",
+    photo: "carteSakuraMatcha",
     layers: ["#86a43f", "#ebbfc6", "#f2c9d0"],
   },
 
@@ -169,9 +169,8 @@ export const products: Product[] = [
     category: "thes",
     description: "Oolong infusé et pêche, servi bien frais avec une tranche d'agrume.",
     sizes: S(5.9, 6.9),
-    photo: "oolongPecheRue",
+    photo: "carteOolongPeche",
     layers: ["#e98a2e", "#d4661c"],
-    aValider: "Photo associée d'après la carte (thé ambré à l'agrume).",
   },
   {
     slug: "the-vert-citron-frappe",
@@ -181,6 +180,7 @@ export const products: Product[] = [
     category: "thes",
     description: "Thé vert et citron frappés à la main, acidulé et désaltérant.",
     sizes: S(5.5, 6.5),
+    photo: "carteCitronFrappe",
     layers: ["#f7d65a", "#efb93a"],
   },
 
@@ -195,9 +195,9 @@ export const products: Product[] = [
     temps: ["froid"],
     sizes: S(),
     signature: true,
-    photo: "raisinDetail",
+    photo: "carteRaisinFrais",
     layers: ["#f6efe4", "#b8344a", "#e4b94a"],
-    aValider: "Prix non lisibles sur la carte. Photo associée d'après le visuel de la carte.",
+    aValider: "Prix non lisibles sur la carte.",
   },
   {
     slug: "mango-pomelo-sago",
@@ -207,6 +207,7 @@ export const products: Product[] = [
     description: "Mangue, pomelo et perles de sagou : un grand classique, onctueux et fruité.",
     temps: ["froid"],
     sizes: S(),
+    photo: "carteMangoPomelo",
     layers: ["#fbf0da", "#f4a63c", "#f7c25c"],
     aValider: "Prix non lisibles sur la carte.",
   },
@@ -218,6 +219,7 @@ export const products: Product[] = [
     description: "Une couche bleu pastel, de la coco et de la mangue : la plus photogénique.",
     temps: ["froid"],
     sizes: S(),
+    photo: "carteMangoCocoBleu",
     layers: ["#8fb8dc", "#f5f1e8", "#f3be4a"],
     aValider: "Prix non lisibles sur la carte.",
   },
@@ -231,8 +233,9 @@ export const products: Product[] = [
     description: "Le thé au lait de la maison, rond et réconfortant.",
     sizes: S(6.5, 7.5),
     signature: true,
+    photo: "carteTheAuLait",
     layers: ["#d9b58c", "#c89a6a"],
-    aValider: "Nom partiellement visible sur la carte.",
+    aValider: "Nom partiellement visible sur la carte. Gobelet non visible non plus : visuel à comparer à la vraie boisson.",
   },
   {
     slug: "latte-pistache",
@@ -240,7 +243,7 @@ export const products: Product[] = [
     category: "lactees",
     description: "Crème de pistache et lait, parsemé d'éclats de pistache.",
     sizes: S(7, 8),
-    photo: "pLattePistache",
+    photo: "carteLattePistache",
     layers: ["#e6dcae", "#f4f0e2"],
     aValider: "Nom et prix partiellement visibles sur la carte.",
   },
@@ -253,9 +256,8 @@ export const products: Product[] = [
     description: "Lait frais, perles de tapioca et sirop de sucre brun.",
     temps: ["chaud", "froid"],
     sizes: S(6.5, 7.5),
-    photo: "gobeletIllustre",
+    photo: "carteLaitPerles",
     layers: ["#8a5226", "#efe2cf", "#3a2216"],
-    aValider: "Photo : gobelet chaud illustré présenté sur la carte pour cette boisson.",
   },
   {
     slug: "chocolat-chaud",
@@ -264,7 +266,7 @@ export const products: Product[] = [
     description: "Un chocolat chaud généreux, servi dans un gobelet illustré.",
     temps: ["chaud"],
     sizes: [{ ml: 500 }],
-    photo: "pChocolatChaud",
+    photo: "carteChocolatChaud",
     layers: ["#6b3a22", "#4d2716"],
     aValider: "Visible sur le visuel de l'offre du matin. Prix et formats à confirmer.",
   },
@@ -279,6 +281,7 @@ export const products: Product[] = [
     description: "Purée de taro violette et lait de coco épais, coiffés d'une mousse.",
     sizes: S(6.5, 7.5),
     signature: true,
+    photo: "carteTaroCoco",
     layers: ["#c9b3de", "#f2ecf3", "#e7dcef"],
   },
   {
@@ -291,6 +294,7 @@ export const products: Product[] = [
     temps: ["froid"],
     sizes: S(6.9, 7.9),
     isNew: true,
+    photo: "cartePistacheJasmin",
     layers: ["#f1e6c6", "#e9b64c", "#e2a43a"],
   },
   {
@@ -304,6 +308,7 @@ export const products: Product[] = [
     sizes: S(7.5, 8.5),
     isNew: true,
     signature: true,
+    photo: "carteCafePistache",
     layers: ["#b48a5e", "#e6dcae", "#f4efe2"],
   },
   {
@@ -315,6 +320,7 @@ export const products: Product[] = [
     temps: ["froid"],
     sizes: S(6),
     isNew: true,
+    photo: "carteCocoAmericano",
     layers: ["#7a3f1c", "#a8632e"],
   },
   {
@@ -326,7 +332,7 @@ export const products: Product[] = [
     description: "Expresso versé sur un lait de coco épais : deux couches, un contraste.",
     temps: ["froid"],
     sizes: S(6.5, 7.5),
-    photo: "pCocoLatte",
+    photo: "carteCocoLatte",
     layers: ["#6b3a1e", "#c68e5c", "#f6f1e6"],
   },
 
@@ -339,6 +345,7 @@ export const products: Product[] = [
     description: "Mangue mixée et yaourt, épais et solaire.",
     temps: ["froid"],
     sizes: S(7.5, 8.5),
+    photo: "carteSmoothieMangue",
     layers: ["#f6c453", "#f8e7b2", "#f7f1e1"],
   },
   {
@@ -349,6 +356,7 @@ export const products: Product[] = [
     description: "Pêche et yaourt marbrés de rose pâle.",
     temps: ["froid"],
     sizes: S(7.5, 8.5),
+    photo: "carteSmoothiePeche",
     layers: ["#f5c6b8", "#fbe9e2", "#f3b4a4"],
   },
   {
@@ -359,6 +367,7 @@ export const products: Product[] = [
     category: "smoothies",
     description: "Avocat et yaourt en spirales vertes, doux et rassasiant.",
     sizes: S(7.5, 8.5),
+    photo: "carteSmoothieAvocat",
     layers: ["#9fbf5a", "#eef2dc", "#b7cf7c"],
   },
 
