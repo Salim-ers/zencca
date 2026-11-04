@@ -1,0 +1,344 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   ZENCCA — design tokens
+   Palette tirée de la boutique réelle : murs ocre, store prune,
+   enseigne jaune, terrazzo, fresque bleue, boissons matcha / sakura.
+------------------------------------------------------------------- */
+@theme {
+  --color-creme: #f8ebd3;
+  --color-papier: #fdf6ea;
+  --color-encre: #201409;
+  --color-brun: #3d2a1f;
+  --color-ocre: #e6b465;
+  --color-ocre-clair: #f1d29b;
+  --color-store: #4d2724;
+  --color-enseigne: #ffd21f;
+  --color-matcha: #a9bd6e;
+  --color-matcha-pale: #dfe5c3;
+  --color-matcha-fonce: #5f7232;
+  --color-sakura: #ebbfc6;
+  --color-sakura-pale: #f7e2e3;
+  --color-coco: #f3ebdd;
+  --color-fresque: #a9c9da;
+  --color-peche: #f3a983;
+  --color-mangue: #f6c453;
+  --color-raisin: #b8344a;
+  --color-taro: #c9b3de;
+  --color-pistache: #cfc995;
+  --color-cafe: #6b3f2a;
+
+  --font-display: var(--font-fraunces), "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: var(--font-figtree), "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-cjk: var(--font-noto-sc), "Noto Serif SC", "Songti SC", "SimSun", serif;
+
+  --ease-infuse: cubic-bezier(0.65, 0.05, 0.36, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --breakpoint-xs: 25rem;
+  --breakpoint-3xl: 120rem;
+  --breakpoint-4xl: 160rem;
+}
+
+:root {
+  --header-tint: var(--color-papier);
+  --gutter: clamp(1rem, 4vw, 4.5rem);
+  --maxw: 1680px;
+  color-scheme: light;
+}
+
+html {
+  background: var(--color-creme);
+  color: var(--color-encre);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  scrollbar-gutter: stable;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-creme);
+  overflow-x: clip;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+/* Taille fluide 4K / ultrawide : on agrandit doucement la racine */
+@media (min-width: 1920px) {
+  html { font-size: calc(16px + (100vw - 1920px) * 0.0035); }
+}
+@media (min-width: 3200px) {
+  html { font-size: 22px; }
+}
+
+::selection {
+  background: var(--color-matcha);
+  color: var(--color-encre);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-encre);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.on-dark :focus-visible,
+.on-dark:focus-visible {
+  outline-color: var(--color-enseigne);
+}
+
+/* ------------------------------------------------------------------
+   Typographie
+------------------------------------------------------------------- */
+.font-display {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100, "WONK" 0;
+  font-optical-sizing: auto;
+  letter-spacing: -0.02em;
+}
+.font-display-wonk {
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+}
+.font-cjk {
+  font-family: var(--font-cjk);
+  letter-spacing: 0.08em;
+}
+.vertical-cjk {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  letter-spacing: 0.25em;
+}
+
+.t-hero {
+  font-size: clamp(2.9rem, 0.9rem + 6.2vw, 8.6rem);
+  line-height: 0.9;
+  font-weight: 560;
+  letter-spacing: -0.035em;
+}
+.t-mega {
+  font-size: clamp(4rem, 1rem + 15vw, 22rem);
+  line-height: 0.8;
+  font-weight: 620;
+  letter-spacing: -0.05em;
+}
+.t-h1 {
+  font-size: clamp(2.75rem, 1.6rem + 5.2vw, 8rem);
+  line-height: 0.92;
+  font-weight: 560;
+  letter-spacing: -0.03em;
+}
+.t-h2 {
+  font-size: clamp(2.25rem, 1.4rem + 3.6vw, 5.5rem);
+  line-height: 0.95;
+  font-weight: 540;
+  letter-spacing: -0.025em;
+}
+.t-h3 {
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.75rem);
+  line-height: 1.02;
+  font-weight: 540;
+  letter-spacing: -0.015em;
+}
+.t-lead {
+  font-size: clamp(1.125rem, 1rem + 0.45vw, 1.5rem);
+  line-height: 1.45;
+}
+.t-small {
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+.measure { max-width: 34rem; }
+
+/* Lignes masquées pour les reveals de texte */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.line-mask > span { display: inline-block; will-change: transform; }
+
+/* ------------------------------------------------------------------
+   Formes de la marque — l'arche (niches et fresque de la boutique)
+------------------------------------------------------------------- */
+.arch {
+  border-radius: 999px 999px 1.25rem 1.25rem / 999px 999px 1.25rem 1.25rem;
+  overflow: hidden;
+  isolation: isolate;
+}
+.arch-full {
+  border-radius: 999px 999px 0 0 / 999px 999px 0 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+.pill {
+  border-radius: 999px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+@media (min-width: 2400px) {
+  :root { --maxw: 2200px; }
+}
+
+/* Terrazzo — motif du sol de la boutique */
+.terrazzo {
+  background-color: var(--terrazzo-bg, #8f8a83);
+  background-image: url("/textures/terrazzo.svg");
+  background-size: 420px 420px;
+}
+
+/* Grain photographique discret */
+.grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("/textures/grain.png");
+  background-size: 180px;
+  opacity: 0.07;
+  mix-blend-mode: multiply;
+}
+
+/* Boutons */
+.btn {
+  --btn-bg: var(--color-encre);
+  --btn-fg: var(--color-papier);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 620;
+  font-size: 1rem;
+  line-height: 1.1;
+  letter-spacing: 0.005em;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.45s var(--ease-soft), box-shadow 0.45s var(--ease-soft);
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--btn-fill, var(--color-matcha));
+  border-radius: inherit;
+  transform: translateY(101%);
+  transition: transform 0.55s var(--ease-infuse), border-radius 0.55s var(--ease-infuse);
+  border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+}
+@media (hover: hover) {
+  .btn:hover::before {
+    transform: translateY(0);
+    border-radius: 0;
+  }
+  .btn:hover { color: var(--btn-fg-hover, var(--color-encre)); }
+}
+.btn:active { transform: scale(0.97); }
+.btn-ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-encre);
+  box-shadow: inset 0 0 0 1.5px currentColor;
+}
+.btn-sign {
+  --btn-bg: var(--color-enseigne);
+  --btn-fg: var(--color-encre);
+  --btn-fill: var(--color-encre);
+  --btn-fg-hover: var(--color-enseigne);
+}
+.btn-cream {
+  --btn-bg: var(--color-papier);
+  --btn-fg: var(--color-encre);
+  --btn-fill: var(--color-enseigne);
+}
+.btn-ghost-light {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-papier);
+  --btn-fill: var(--color-papier);
+  --btn-fg-hover: var(--color-store);
+  box-shadow: inset 0 0 0 1.5px currentColor;
+}
+.btn .btn-arrow {
+  transition: transform 0.5s var(--ease-soft);
+}
+@media (hover: hover) {
+  .btn:hover .btn-arrow { transform: translateX(4px) rotate(-8deg); }
+}
+
+/* Lien souligné « infusion » */
+.link-infuse {
+  position: relative;
+  text-decoration: none;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1.5px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s var(--ease-infuse);
+  padding-bottom: 2px;
+}
+@media (hover: hover) {
+  .link-infuse:hover { background-size: 100% 1.5px; }
+}
+.link-infuse[aria-current="page"] { background-size: 100% 1.5px; }
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ------------------------------------------------------------------
+   Écran d'intro — masqué avant la peinture si déjà vu
+------------------------------------------------------------------- */
+html.intro-seen #zencca-intro { display: none; }
+html.js:not(.intro-seen):not(.intro-done) body { overflow: hidden; }
+html:not(.js) #zencca-intro { display: none; }
+html.js:not(.intro-seen) #zencca-intro svg { opacity: 0; }
+
+/* Les éléments animés à l'entrée sont cachés tant que JS n'a pas pris la main */
+html.js [data-enter] { visibility: hidden; }
+html.js.reduced [data-enter] { visibility: visible; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.sr-only-focusable:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+html.js [data-enter] { animation: enter-failsafe 0s linear 4.5s forwards; }
+@keyframes enter-failsafe { to { visibility: visible; } }
