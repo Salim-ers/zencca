@@ -8,7 +8,7 @@ import { gallery, galleryCategories, type GalleryCategory } from "@/data/gallery
 import { photos } from "@/data/images";
 import { cn } from "@/lib/utils";
 
-const shapes = ["rounded-[1.6rem]", "arch", "rounded-[1.6rem]", "rounded-[2.4rem_2.4rem_1rem_1rem]", "arch-full", "rounded-[1.6rem]"];
+const shapes = ["rounded-[1.1rem]", "tuile", "rounded-[1.1rem]", "tuile-d", "tuile", "rounded-[1.1rem]"];
 
 export default function Gallery() {
   const [filter, setFilter] = useState<GalleryCategory | "tout">("tout");

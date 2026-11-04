@@ -200,7 +200,7 @@ export default function MenuExplorer() {
                     className="group mb-6 grid w-full grid-cols-1 items-center gap-6 rounded-[2rem] text-left sm:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] sm:gap-10"
                   >
                     <div className={cn("transition-transform duration-700 ease-[var(--ease-soft)]", hoverByCat[feature.category])}>
-                      <ProductVisual product={feature} sizes="(min-width: 1024px) 30vw, (min-width: 640px) 40vw, 90vw" shape="arch" className="aspect-[3/4] w-full" />
+                      <ProductVisual product={feature} sizes="(min-width: 1024px) 30vw, (min-width: 640px) 40vw, 90vw" className="aspect-[3/4] w-full" />
                     </div>
                     <ProductText p={feature} big />
                   </motion.button>
@@ -224,7 +224,6 @@ export default function MenuExplorer() {
                           <ProductVisual
                             product={p}
                             sizes="(min-width: 1280px) 22vw, (min-width: 640px) 40vw, 90vw"
-                            shape={i % 2 ? "soft" : "pill"}
                             className={cn("w-full", i % 2 ? "aspect-[4/5]" : "aspect-[3/4]")}
                           />
                         </div>

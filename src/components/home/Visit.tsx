@@ -35,7 +35,7 @@ export default function Visit() {
           </div>
         </div>
         <div className="relative lg:col-span-5 lg:col-start-8">
-          <InfuseImage photo={photos.facadeSoir} sizes="(min-width: 1024px) 38vw, 90vw" shape="arch" parallax={6} className="aspect-[3/4]" />
+          <InfuseImage photo={photos.facadeSoir} sizes="(min-width: 1024px) 38vw, 90vw" shape="tuile" parallax={6} className="aspect-[3/4]" />
         </div>
       </div>
     </section>

@@ -192,22 +192,23 @@ body {
 .line-mask > span { display: inline-block; will-change: transform; }
 
 /* ------------------------------------------------------------------
-   Formes de la marque — l'arche (niches et fresque de la boutique)
+   Forme de la marque : la tuile du menu en boutique, au coin coupé.
+   --coin règle le coin et --tuile-r l'arrondi, pour les petits formats.
 ------------------------------------------------------------------- */
-.arch {
-  border-radius: 999px 999px 1.25rem 1.25rem / 999px 999px 1.25rem 1.25rem;
+.tuile,
+.tuile-d {
+  --coin-size: var(--coin, clamp(2.5rem, 4.8vw, 5rem));
+  --r: var(--tuile-r, 1.1rem);
   overflow: hidden;
   isolation: isolate;
 }
-.arch-full {
-  border-radius: 999px 999px 0 0 / 999px 999px 0 0;
-  overflow: hidden;
-  isolation: isolate;
+.tuile {
+  border-radius: 0 var(--r) var(--r) var(--r);
+  clip-path: polygon(var(--coin-size) 0, 100% 0, 100% 100%, 0 100%, 0 var(--coin-size));
 }
-.pill {
-  border-radius: 999px;
-  overflow: hidden;
-  isolation: isolate;
+.tuile-d {
+  border-radius: var(--r) 0 var(--r) var(--r);
+  clip-path: polygon(0 0, calc(100% - var(--coin-size)) 0, 100% var(--coin-size), 100% 100%, 0 100%);
 }
 .wrap {
   width: 100%;

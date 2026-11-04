@@ -50,7 +50,7 @@ export default function Signature() {
           <InfuseImage
             photo={photos.comptoirNeon}
             sizes="(min-width: 1024px) 40vw, 92vw"
-            shape="arch"
+            shape="tuile"
             parallax={8}
             className="aspect-[3/4]"
           />
@@ -87,10 +87,10 @@ export default function Signature() {
                 <InfuseImage
                   photo={{ ...photos.salonFresque, focus: "92% 55%" }}
                   sizes="(min-width: 1024px) 20vw, 45vw"
-                  shape="arch-full"
+                  shape="tuile-d"
                   className="aspect-[3/4]"
                 />
-                <figcaption className="mt-3 text-[0.95rem] text-store">La fresque, en arche</figcaption>
+                <figcaption className="mt-3 text-[0.95rem] text-store">La fresque du salon</figcaption>
               </figure>
             </Parallax>
           </div>

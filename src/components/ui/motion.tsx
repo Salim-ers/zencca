@@ -57,7 +57,7 @@ export function InfuseImage({
   photo,
   sizes,
   className,
-  shape = "arch",
+  shape = "tuile",
   priority,
   parallax = 0,
   trigger = "scroll",
@@ -69,7 +69,7 @@ export function InfuseImage({
   photo: Photo;
   sizes: string;
   className?: string;
-  shape?: "arch" | "arch-full" | "pill" | "soft" | "none";
+  shape?: "tuile" | "tuile-d" | "soft" | "none";
   priority?: boolean;
   /** amplitude du parallaxe interne en % (0 = aucun) */
   parallax?: number;
@@ -115,21 +115,13 @@ export function InfuseImage({
     },
     { scope: ref }
   );
-  const shapeCls =
-    shape === "arch"
-      ? "arch"
-      : shape === "arch-full"
-        ? "arch-full"
-        : shape === "pill"
-          ? "pill"
-          : shape === "soft"
-            ? "rounded-[1.75rem] overflow-hidden"
-            : "overflow-hidden";
+  const shapeCls = shape === "soft" ? "rounded-[1.75rem] overflow-hidden" : shape === "none" ? "overflow-hidden" : shape;
   return (
     <div ref={ref} className={cn(!className?.includes("absolute") && "relative", className)} data-enter={trigger === "reveal" ? "" : undefined}>
-      <div data-inner className={cn("absolute inset-0", shapeCls)} style={{ clipPath: "inset(0% 0% 0% 0%)" }}>
+      <div data-inner className="absolute inset-0" style={{ clipPath: "inset(0% 0% 0% 0%)" }}>
+        <div className={cn("absolute inset-0", shapeCls)}>
         <div className={cn("absolute", parallax ? "-inset-y-[12%] inset-x-0" : "inset-0")}>
-          <div data-img className="absolute inset-0 will-change-transform">
+          <div data-img className="absolute inset-0">
             <div
               className={cn(
                 "absolute inset-0",
@@ -150,6 +142,7 @@ export function InfuseImage({
           </div>
         </div>
         {children}
+        </div>
       </div>
     </div>
   );

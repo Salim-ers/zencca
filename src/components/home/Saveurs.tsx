@@ -164,9 +164,9 @@ export default function Saveurs() {
             </div>
           </div>
 
-          {/* Arche centrale : les photos se remplissent comme un gobelet */}
+          {/* Tuile centrale : les photos se remplissent comme un gobelet */}
           <div className="relative col-span-4 col-start-5 h-[74vh] self-end">
-            <div className="arch-full absolute inset-0">
+            <div className="tuile absolute inset-0">
               {chapters.map((c, i) => (
                 <div key={c.word} data-photo className="absolute inset-0 overflow-hidden" style={{ zIndex: i }}>
                   <Image
@@ -221,7 +221,7 @@ export default function Saveurs() {
                 {c.word}
               </p>
               <div className="relative mx-auto aspect-[3/4] w-[72%] max-w-sm sm:w-[56%]">
-                <div className="arch-full absolute inset-0">
+                <div className="tuile absolute inset-0">
                   <Image
                     src={photos[c.photo].src}
                     alt={photos[c.photo].alt}

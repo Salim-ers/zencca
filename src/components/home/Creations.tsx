@@ -12,9 +12,8 @@ import LayerPill from "@/components/ui/LayerPill";
 type Piece = {
   slug: string;
   photo: PhotoKey;
-  shape: "arch" | "arch-full" | "pill" | "soft";
+  shape: "tuile" | "tuile-d" | "soft";
   swatch: string;
-  swatchShape: string;
   grid: string;
   ratio: string;
   speed: number;
@@ -25,9 +24,8 @@ const pieces: Piece[] = [
   {
     slug: "the-au-raisin-frais",
     photo: "raisinSalon",
-    shape: "arch",
+    shape: "tuile",
     swatch: "#b8344a",
-    swatchShape: "rounded-full",
     grid: "lg:col-start-7 lg:col-span-5 lg:row-start-1 lg:row-span-2",
     ratio: "aspect-[4/5]",
     speed: 0.12,
@@ -37,7 +35,6 @@ const pieces: Piece[] = [
     photo: "cocoLatteService",
     shape: "soft",
     swatch: "#d9c3a5",
-    swatchShape: "rounded-[2rem]",
     grid: "lg:col-start-1 lg:col-span-5 lg:row-start-2 lg:row-span-2 lg:mt-24",
     ratio: "aspect-[3/4]",
     speed: -0.08,
@@ -46,9 +43,8 @@ const pieces: Piece[] = [
   {
     slug: "the-oolong-peche",
     photo: "oolongPecheRue",
-    shape: "pill",
+    shape: "tuile-d",
     swatch: "#f3a983",
-    swatchShape: "rounded-full",
     grid: "lg:col-start-8 lg:col-span-4 lg:row-start-3 lg:row-span-2 lg:mt-40",
     ratio: "aspect-[3/4.4]",
     speed: 0.2,
@@ -56,9 +52,8 @@ const pieces: Piece[] = [
   {
     slug: "lait-perles-sucre-brun",
     photo: "gobeletIllustre",
-    shape: "arch-full",
+    shape: "tuile",
     swatch: "#e6b465",
-    swatchShape: "rounded-t-full",
     grid: "lg:col-start-2 lg:col-span-4 lg:row-start-4 lg:row-span-2 lg:mt-16",
     ratio: "aspect-[3/4]",
     speed: 0.05,
@@ -96,8 +91,7 @@ export default function Creations() {
                     <div
                       aria-hidden
                       className={cn(
-                        "absolute -bottom-6 -right-6 h-[62%] w-[70%] transition-transform duration-700 ease-[var(--ease-soft)] group-hover:-translate-x-3 group-hover:-translate-y-3",
-                        p.swatchShape,
+                        "absolute -bottom-6 -right-6 h-[62%] w-[70%] rounded-[1.1rem] transition-transform duration-700 ease-[var(--ease-soft)] group-hover:-translate-x-3 group-hover:-translate-y-3",
                         p.align === "right" && "-left-6 right-auto group-hover:translate-x-3"
                       )}
                       style={{ background: p.swatch }}
@@ -141,7 +135,7 @@ export default function Creations() {
         {/* Clin d'œil : les suppléments, en perles */}
         <div className="relative hidden items-end lg:col-span-4 lg:col-start-8 lg:row-start-5 lg:flex">
           <figure className="flex items-center gap-5">
-            <div className="pill relative h-28 w-20 shrink-0">
+            <div className="tuile relative h-28 w-20 shrink-0 [--coin:1.4rem] [--tuile-r:0.6rem]">
               <Image src={photos.pMatchaLatte.src} alt="" fill sizes="80px" className="object-cover" />
             </div>
             <figcaption className="text-brun">

@@ -11,21 +11,18 @@ export default function ProductVisual({
   product,
   sizes,
   className,
-  shape = "pill",
   priority,
 }: {
   product: Product;
   sizes: string;
   className?: string;
-  shape?: "pill" | "arch" | "soft";
   priority?: boolean;
 }) {
   const cat = categoryById(product.category);
-  const shapeCls = shape === "arch" ? "arch" : shape === "soft" ? "rounded-[1.6rem] overflow-hidden" : "rounded-[1.6rem] overflow-hidden";
   if (product.photo) {
     const ph = photos[product.photo];
     return (
-      <div className={cn(!className?.includes("absolute") && "relative", shapeCls, className)} style={{ background: cat.tint }}>
+      <div className={cn(!className?.includes("absolute") && "relative", "tuile", className)} style={{ background: cat.tint }}>
         <Image
           src={ph.src}
           alt={ph.alt}
@@ -41,7 +38,7 @@ export default function ProductVisual({
   }
   return (
     <div
-      className={cn(!className?.includes("absolute") && "relative", "flex items-center justify-center", shapeCls, className)}
+      className={cn(!className?.includes("absolute") && "relative", "tuile flex items-center justify-center", className)}
       style={{ background: cat.tint }}
       role="img"
       aria-label={`Couleurs de la boisson ${product.name}`}

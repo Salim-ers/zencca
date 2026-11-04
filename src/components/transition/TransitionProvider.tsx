@@ -159,7 +159,7 @@ export default function TransitionProvider({ children }: { children: React.React
             {i === 2 && (
               <div data-label className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-6 text-center">
                 {view.image && (
-                  <div className="arch relative h-[34vh] w-[24vh] max-w-[60vw]">
+                  <div className="tuile relative h-[34vh] w-[24vh] max-w-[60vw]">
                     <Image src={view.image} alt="" fill sizes="30vh" className="object-cover" />
                   </div>
                 )}

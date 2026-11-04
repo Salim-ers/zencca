@@ -43,7 +43,7 @@ export default function NousTrouverPage() {
             </div>
           </div>
           <div className="lg:col-span-4 lg:col-start-9">
-            <InfuseImage photo={photos.facadeSoir} sizes="(min-width: 1024px) 32vw, 80vw" shape="arch" trigger="reveal" priority className="mx-auto aspect-[3/4] w-[78%] sm:w-[60%] lg:w-full" />
+            <InfuseImage photo={photos.facadeSoir} sizes="(min-width: 1024px) 32vw, 80vw" shape="tuile" trigger="reveal" priority className="mx-auto aspect-[3/4] w-[78%] sm:w-[60%] lg:w-full" />
           </div>
         </div>
         <StrataDivider layers={["#8a4a3c", "#e6b465"]} to="#f8ebd3" className="absolute inset-x-0 bottom-0" />

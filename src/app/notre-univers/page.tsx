@@ -29,7 +29,7 @@ export default function UniversPage() {
         <InfuseImage
           photo={photos.comptoirNeon}
           sizes="(min-width: 1024px) 30vw, 80vw"
-          shape="arch"
+          shape="tuile"
           trigger="reveal"
           priority
           className="mx-auto aspect-[3/4] w-[78%] sm:w-[60%] lg:w-full"

@@ -33,7 +33,7 @@ export default function Nouveautes({ offers, drafts }: { offers: Offer[]; drafts
                 <span className="absolute -left-2 -top-3 z-10 rotate-[-6deg] rounded-full bg-enseigne px-4 py-1.5 text-sm font-semibold text-encre shadow-sm transition-transform duration-500 group-hover:rotate-0">
                   Nouveau
                 </span>
-                <ProductVisual product={feature} sizes="(min-width: 768px) 30vw, 80vw" shape="arch" className="aspect-[3/4] w-full" />
+                <ProductVisual product={feature} sizes="(min-width: 768px) 30vw, 80vw" className="aspect-[3/4] w-full" />
               </div>
               <div className="md:col-span-6 md:col-start-7">
                 <NewsText p={feature} big />
@@ -48,7 +48,7 @@ export default function Nouveautes({ offers, drafts }: { offers: Offer[]; drafts
                     <span className="absolute -left-2 -top-3 z-10 rotate-[-6deg] rounded-full bg-enseigne px-4 py-1.5 text-sm font-semibold text-encre shadow-sm transition-transform duration-500 group-hover:rotate-0">
                       Nouveau
                     </span>
-                    <ProductVisual product={p} sizes="(min-width: 1024px) 28vw, (min-width: 640px) 44vw, 92vw" shape={i % 2 ? "soft" : "pill"} className="aspect-[4/5] w-full" />
+                    <ProductVisual product={p} sizes="(min-width: 1024px) 28vw, (min-width: 640px) 44vw, 92vw" className="aspect-[4/5] w-full" />
                   </div>
                   <div className="mt-6">
                     <NewsText p={p} />

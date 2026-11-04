@@ -173,7 +173,7 @@ export default function Univers() {
             </p>
           </div>
           <figure className="lg:col-span-6 lg:col-start-7">
-            <InfuseImage photo={photos.salonFresque} sizes="(min-width: 1024px) 46vw, 92vw" shape="arch" parallax={8} className="aspect-[4/5]" />
+            <InfuseImage photo={photos.salonFresque} sizes="(min-width: 1024px) 46vw, 92vw" shape="tuile" parallax={8} className="aspect-[4/5]" />
             <figcaption className="mt-3 text-store">Le comptoir, le banc en bois et la fresque</figcaption>
           </figure>
           <Parallax speed={-0.15} disableOnTouch className="lg:col-span-4 lg:col-start-2 lg:-mt-64">
@@ -183,7 +183,7 @@ export default function Univers() {
             </figure>
           </Parallax>
           <figure className="lg:col-span-3 lg:col-start-8 lg:mt-10">
-            <InfuseImage photo={photos.enseigne} sizes="(min-width: 1024px) 22vw, 92vw" shape="arch-full" className="aspect-[3/4]" />
+            <InfuseImage photo={photos.enseigne} sizes="(min-width: 1024px) 22vw, 92vw" shape="tuile-d" className="aspect-[3/4]" />
             <figcaption className="mt-3 text-store">L&apos;enseigne jaune</figcaption>
           </figure>
         </div>
@@ -203,7 +203,7 @@ export default function Univers() {
               Zencca pour repartir les mains pleines.
             </p>
             <div className="mt-10 grid grid-cols-2 gap-4">
-              <InfuseImage photo={photos.gobeletIllustre} sizes="20vw" shape="arch-full" className="aspect-[3/4]" />
+              <InfuseImage photo={photos.gobeletIllustre} sizes="20vw" shape="tuile" className="aspect-[3/4] [--coin:2rem] [--tuile-r:0.8rem]" />
               <InfuseImage photo={photos.toteBag} sizes="20vw" shape="soft" className="mt-10 aspect-[3/4]" />
             </div>
             <Magnetic className="mt-10">

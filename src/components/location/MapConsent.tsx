@@ -28,7 +28,7 @@ export default function MapConsent() {
   };
 
   return (
-    <div className="arch relative h-full min-h-[440px] w-full bg-[#e9e1d2] lg:min-h-[640px]">
+    <div className="relative isolate h-full min-h-[440px] w-full overflow-hidden rounded-[1.1rem] bg-[#e9e1d2] lg:min-h-[640px]">
       {ok ? (
         <>
           {!loaded && <div className="absolute inset-0 animate-pulse bg-[#e9e1d2]" aria-hidden />}

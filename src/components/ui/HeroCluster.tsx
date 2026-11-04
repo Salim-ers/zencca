@@ -3,7 +3,7 @@
 import { InfuseImage, Parallax } from "@/components/ui/motion";
 import { photos, type PhotoKey } from "@/data/images";
 
-/** Trois arches photographiques décalées, pour les en-têtes de pages. */
+/** Trois tuiles photographiques décalées, pour les en-têtes de pages. */
 export default function HeroCluster({ items }: { items: [PhotoKey, PhotoKey, PhotoKey] }) {
   return (
     <div className="relative mx-auto grid h-full max-w-[30rem] grid-cols-3 items-end gap-3 sm:gap-4 lg:max-w-none" aria-hidden>
@@ -12,11 +12,11 @@ export default function HeroCluster({ items }: { items: [PhotoKey, PhotoKey, Pho
           <InfuseImage
             photo={photos[k]}
             sizes="(min-width: 1024px) 12vw, 30vw"
-            shape={i === 1 ? "arch-full" : "arch"}
+            shape={i === 1 ? "tuile-d" : "tuile"}
             trigger="reveal"
             delay={0.15 + i * 0.12}
             priority={i === 1}
-            className="aspect-[3/4.4] w-full"
+            className="aspect-[3/4.4] w-full [--coin:1.6rem] [--tuile-r:0.7rem]"
           />
         </Parallax>
       ))}

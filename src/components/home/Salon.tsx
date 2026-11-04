@@ -9,9 +9,9 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import { cn } from "@/lib/utils";
 
 const frames: { photo: PhotoKey; caption: string; w: string; h: string; shape: string; offset: string }[] = [
-  { photo: "facadeTerrasse", caption: "La façade ocre et ses chaises de terrasse", w: "lg:w-[34vw]", h: "lg:h-[72vh]", shape: "arch", offset: "lg:self-end" },
+  { photo: "facadeTerrasse", caption: "La façade ocre et ses chaises de terrasse", w: "lg:w-[34vw]", h: "lg:h-[72vh]", shape: "tuile", offset: "lg:self-end" },
   { photo: "enseigne", caption: "L'enseigne jaune, repère de la rue", w: "lg:w-[22vw]", h: "lg:h-[46vh]", shape: "rounded-[2rem]", offset: "lg:self-start lg:mt-[8vh]" },
-  { photo: "salonFresque", caption: "Plafond lumineux, banc en bois et fresque fleurie", w: "lg:w-[30vw]", h: "lg:h-[62vh]", shape: "arch-full", offset: "lg:self-center" },
+  { photo: "salonFresque", caption: "Plafond lumineux, banc en bois et fresque fleurie", w: "lg:w-[30vw]", h: "lg:h-[62vh]", shape: "tuile-d", offset: "lg:self-center" },
   { photo: "facadeJour", caption: "Portes en bois grandes ouvertes sur le comptoir", w: "lg:w-[26vw]", h: "lg:h-[52vh]", shape: "rounded-[2rem]", offset: "lg:self-end lg:mb-[4vh]" },
 ];
 
@@ -86,7 +86,7 @@ export default function Salon() {
                 className={cn(
                   "relative aspect-[3/4] w-full overflow-hidden lg:aspect-auto",
                   f.h,
-                  f.shape === "arch" ? "arch" : f.shape === "arch-full" ? "arch-full" : f.shape
+                  f.shape
                 )}
               >
                 <div data-frame-img className="absolute -inset-x-[10%] inset-y-0">

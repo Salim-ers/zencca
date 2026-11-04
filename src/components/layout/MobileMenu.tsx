@@ -134,7 +134,7 @@ export default function MobileMenu({ open, onClose }: { open: boolean; onClose: 
                       className="group flex items-center justify-between gap-4 py-3.5 aria-[current=page]:text-matcha-fonce"
                     >
                       <span className="font-display text-[clamp(2.1rem,9vw,3.4rem)] leading-none">{l.label}</span>
-                      <span className="arch relative h-14 w-11 shrink-0 transition-transform duration-500 group-active:scale-95">
+                      <span className="tuile relative h-14 w-11 shrink-0 [--coin:0.85rem] [--tuile-r:0.35rem] transition-transform duration-500 group-active:scale-95">
                         <Image src={photos[thumbs[l.href]].src} alt="" fill sizes="44px" className="object-cover" />
                       </span>
                     </TransitionLink>

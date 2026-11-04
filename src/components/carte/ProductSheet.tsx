@@ -132,7 +132,7 @@ export default function ProductSheet({
                   exit={reduce ? undefined : { opacity: 0 }}
                   transition={{ duration: 0.7, ease: [0.65, 0.05, 0.36, 1] }}
                 >
-                  <ProductVisual product={product} sizes="(min-width: 768px) 46vw, 90vw" shape="arch" className="absolute inset-0" priority />
+                  <ProductVisual product={product} sizes="(min-width: 768px) 46vw, 90vw" className="absolute inset-0" priority />
                 </motion.div>
               </AnimatePresence>
 
