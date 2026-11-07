@@ -4,8 +4,13 @@ import { useRef } from "react";
 import { InfuseImage, Parallax } from "@/components/ui/motion";
 import { WaveEdge } from "@/components/ui/Strata";
 import { photos } from "@/data/images";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { prefersReducedMotion } from "@/lib/utils";
+import { onVisible } from "@/lib/visible";
+import { useT } from "@/i18n/client";
+
+/** La phrase du néon reste en français dans les deux langues : c'est celle de l'enseigne. */
+const NEON = "Une rencontre infusée dans le thé.";
 
 /**
  * LA SIGNATURE — la phrase du néon de la boutique, rallumée à l'écran.
@@ -13,31 +18,29 @@ import { prefersReducedMotion } from "@/lib/utils";
  */
 export default function Signature() {
   const root = useRef<HTMLElement>(null);
+  const t = useT().signature;
 
   useGSAP(
-    () => {
+    (_ctx, contextSafe) => {
       if (prefersReducedMotion()) return;
       const neon = root.current!.querySelector<HTMLElement>("[data-neon]");
-      gsap.set(neon, { opacity: 0.18, textShadow: "0 0 0 rgba(255,236,190,0)" });
-      ScrollTrigger.create({
-        trigger: neon,
-        start: "top 75%",
-        once: true,
-        onEnter: () => {
+      const glow = root.current!.querySelector<HTMLElement>("[data-neon-glow]");
+      gsap.set(neon, { opacity: 0.18 });
+      // Le néon s'allume quand la phrase atteint les trois quarts de l'écran
+      return onVisible(
+        neon,
+        contextSafe!(() => {
           gsap
             .timeline()
             .to(neon, { opacity: 1, duration: 0.06 })
             .to(neon, { opacity: 0.3, duration: 0.08 })
             .to(neon, { opacity: 1, duration: 0.05 })
             .to(neon, { opacity: 0.55, duration: 0.12, delay: 0.1 })
-            .to(neon, {
-              opacity: 1,
-              textShadow: "0 0 22px rgba(255,240,190,0.95), 0 0 60px rgba(255,226,140,0.7)",
-              duration: 0.6,
-              ease: "power2.out",
-            });
-        },
-      });
+            .to(neon, { opacity: 1, duration: 0.3 })
+            .to(glow, { opacity: 1, duration: 0.6, ease: "power2.out" }, "<");
+        }),
+        0.25
+      );
     },
     { scope: root }
   );
@@ -61,25 +64,33 @@ export default function Signature() {
 
         <div className="flex flex-col justify-center lg:col-span-6 lg:col-start-7">
           <h2 id="signature-title" className="sr-only">
-            La signature Zencca
+            {t.srTitle}
           </h2>
-          <p
-            data-neon
-            className="font-display font-display-wonk t-h1 italic text-encre [text-wrap:balance]"
-            style={{ fontWeight: 420 }}
-          >
-            Une rencontre infusée dans le thé.
-          </p>
-          <p className="t-lead measure mt-8 text-store">
-            La phrase brille au-dessus du comptoir. Ici, le thé sert de point de rencontre : entre une pause et une
-            gourmandise, entre la rue Tiquetonne et des saveurs venues d&apos;Asie.
-          </p>
+          <div className="relative">
+            <p
+              data-neon
+              lang="fr"
+              className="font-display font-display-wonk t-h1 italic text-encre [text-wrap:balance]"
+              style={{ fontWeight: 420 }}
+            >
+              {NEON}
+            </p>
+            <p
+              data-neon-glow
+              aria-hidden
+              className="font-display font-display-wonk t-h1 pointer-events-none absolute inset-0 italic text-encre opacity-0 will-change-[opacity] [text-wrap:balance]"
+              style={{ fontWeight: 420, textShadow: "0 0 22px rgba(255,240,190,0.95), 0 0 60px rgba(255,226,140,0.7)" }}
+            >
+              {NEON}
+            </p>
+          </div>
+          <p className="t-lead measure mt-8 text-store">{t.lead}</p>
 
           <div className="mt-14 grid grid-cols-2 gap-5 sm:gap-8">
             <Parallax speed={-0.12} disableOnTouch>
               <figure>
                 <InfuseImage photo={photos.toteBag} sizes="(min-width: 1024px) 20vw, 45vw" shape="soft" className="aspect-[3/4]" />
-                <figcaption className="mt-3 text-[0.95rem] text-store">Le sac illustré</figcaption>
+                <figcaption className="mt-3 text-[0.95rem] text-store">{t.bag}</figcaption>
               </figure>
             </Parallax>
             <Parallax speed={0.14} disableOnTouch className="mt-16">
@@ -90,7 +101,7 @@ export default function Signature() {
                   shape="tuile-d"
                   className="aspect-[3/4]"
                 />
-                <figcaption className="mt-3 text-[0.95rem] text-store">La fresque du salon</figcaption>
+                <figcaption className="mt-3 text-[0.95rem] text-store">{t.mural}</figcaption>
               </figure>
             </Parallax>
           </div>

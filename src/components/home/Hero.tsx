@@ -7,6 +7,7 @@ import TransitionLink from "@/components/transition/TransitionLink";
 import { Arrow, Magnetic, RevealText } from "@/components/ui/motion";
 import { productBySlug } from "@/data/products";
 import { site } from "@/data/site";
+import { useLocale, useT } from "@/i18n/client";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { onReveal } from "@/lib/ready";
 import { cn, isTouch, prefersReducedMotion } from "@/lib/utils";
@@ -39,9 +40,11 @@ const MID = (CUPS.length - 1) / 2;
  */
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
+  const locale = useLocale();
+  const { hero: t, common } = useT();
 
   useGSAP(
-    () => {
+    (_ctx, contextSafe) => {
       const q = gsap.utils.selector(root);
       if (prefersReducedMotion()) return;
 
@@ -50,15 +53,17 @@ export default function Hero() {
       gsap.set(q("[data-counter]"), { yPercent: 100 });
       gsap.set(q("[data-fade]"), { autoAlpha: 0, y: 14 });
 
-      const off = onReveal(() => {
-        gsap.set(q("[data-enter]"), { visibility: "visible" });
-        gsap
-          .timeline({ defaults: { ease: "expo.out" } })
-          .to(q("[data-counter]"), { yPercent: 0, duration: 1.1 }, 0)
-          .to(q("[data-rise]"), { yPercent: 0, duration: 1.15, stagger: { each: 0.06, from: "center" }, ease: "back.out(1.25)" }, 0.25)
-          .to(q("[data-peek]"), { yPercent: 0, duration: 0.9, ease: "back.out(1.6)" }, 1.15)
-          .to(q("[data-fade]"), { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.75);
-      });
+      const off = onReveal(
+        contextSafe!(() => {
+          gsap.set(q("[data-enter]"), { visibility: "visible" });
+          gsap
+            .timeline({ defaults: { ease: "expo.out" } })
+            .to(q("[data-counter]"), { yPercent: 0, duration: 1.1 }, 0)
+            .to(q("[data-rise]"), { yPercent: 0, duration: 1.15, stagger: { each: 0.06, from: "center" }, ease: "back.out(1.25)" }, 0.25)
+            .to(q("[data-peek]"), { yPercent: 0, duration: 0.9, ease: "back.out(1.6)" }, 1.15)
+            .to(q("[data-fade]"), { autoAlpha: 1, y: 0, duration: 0.9, stagger: 0.07 }, 0.75);
+        })
+      );
 
       // Les gobelets proches du pointeur se soulèvent, comme une vague le long du comptoir
       let cleanupPointer = () => {};
@@ -66,37 +71,44 @@ export default function Hero() {
       if (!isTouch() && row) {
         const lifts = q<HTMLElement>("[data-lift]").map((el) => ({
           el,
+          cx: 0,
+          w: 1,
+          h: 0,
           to: gsap.quickTo(el, "y", { duration: 0.7, ease: "power3.out" }),
         }));
+        const measure = () => {
+          lifts.forEach((l) => {
+            const r = l.el.getBoundingClientRect();
+            l.cx = r.left + r.width / 2;
+            l.w = r.width;
+            l.h = r.height;
+          });
+        };
         const move = (e: PointerEvent) => {
-          lifts.forEach(({ el, to }) => {
-            const r = el.getBoundingClientRect();
-            const d = (e.clientX - (r.left + r.width / 2)) / (r.width * 1.05);
-            to(-Math.exp(-d * d) * r.height * 0.075);
+          lifts.forEach(({ cx, w, h, to }) => {
+            const d = (e.clientX - cx) / (w * 1.05);
+            to(-Math.exp(-d * d) * h * 0.075);
           });
         };
         const leave = () => lifts.forEach(({ to }) => to(0));
+        row.addEventListener("pointerenter", measure);
         row.addEventListener("pointermove", move);
         row.addEventListener("pointerleave", leave);
         cleanupPointer = () => {
+          row.removeEventListener("pointerenter", measure);
           row.removeEventListener("pointermove", move);
           row.removeEventListener("pointerleave", leave);
         };
       }
 
       // Au défilement : le titre s'éloigne, les gobelets s'enfoncent derrière le comptoir
-      gsap.to(q("[data-scroll-title]"), {
-        yPercent: -22,
-        ease: "none",
+      // (une seule timeline, un seul déclencheur pour les huit éléments)
+      const sink = gsap.timeline({
+        defaults: { ease: "none", duration: 1 },
         scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
       });
-      q<HTMLElement>("[data-sink]").forEach((el) => {
-        gsap.to(el, {
-          yPercent: 16 + Number(el.dataset.sink) * 9,
-          ease: "none",
-          scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true },
-        });
-      });
+      sink.to(q("[data-scroll-title]"), { yPercent: -22 }, 0);
+      q<HTMLElement>("[data-sink]").forEach((el) => sink.to(el, { yPercent: 16 + Number(el.dataset.sink) * 9 }, 0));
 
       return () => {
         off();
@@ -122,7 +134,7 @@ export default function Hero() {
             trigger="reveal"
             delay={0.15}
             className="font-display t-comptoir text-center text-encre"
-            lines={["Une rencontre infusée", "dans le thé."]}
+            lines={t.title}
           />
         </div>
       </div>
@@ -130,7 +142,7 @@ export default function Hero() {
       {/* La gamme, alignée sur le comptoir */}
       <ul
         data-row
-        aria-label="Quelques boissons de la carte"
+        aria-label={t.cupsAria}
         className="relative z-20 -mb-[clamp(1.1rem,3.4svh,2.4rem)] flex w-full items-end justify-center pb-2"
         style={{ clipPath: "inset(-100vh -100vw 0 -100vw)" }}
       >
@@ -166,14 +178,15 @@ export default function Hero() {
                   <div data-lift className="relative h-full">
                     <TransitionLink
                       href={`/la-carte?boisson=${c.slug}`}
-                      aria-label={`${product.name} : voir la fiche`}
+                      aria-label={t.cupAria(product.name[locale])}
                       className="group relative block h-full rounded-2xl"
                     >
                       <Image
                         src={c.src}
                         alt=""
                         sizes="(min-width: 640px) 18vw, 38vw"
-                        loading="eager"
+                        // Les gobelets des bords sont masqués sur téléphone : chargés seulement s'ils s'affichent
+                        loading={dist <= 1 ? "eager" : "lazy"}
                         fetchPriority={dist === 0 ? "high" : "auto"}
                         draggable={false}
                         className="block h-full w-auto max-w-none select-none"
@@ -182,7 +195,7 @@ export default function Hero() {
                         aria-hidden
                         className="absolute left-1/2 top-[11%] -translate-x-1/2 whitespace-nowrap rounded-full bg-encre px-3 py-1 text-[0.8rem] font-semibold text-papier opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
                       >
-                        {product.name}
+                        {product.name[locale]}
                       </span>
                     </TransitionLink>
                   </div>
@@ -206,13 +219,15 @@ export default function Hero() {
           <div className="wrap grid grid-cols-1 items-center gap-x-8 gap-y-2.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] pt-3.5 sm:grid-cols-2 lg:grid-cols-12 lg:gap-y-0">
             <div data-fade data-enter className="lg:col-span-4">
               <p className="flex items-baseline justify-between gap-4">
-                <span className="font-display text-[clamp(1.5rem,2.2vw,2.25rem)] leading-[1.05] tracking-tight">Salon de Thé</span>
+                <span className="font-display text-[clamp(1.5rem,2.2vw,2.25rem)] leading-[1.05] tracking-tight" lang="fr">
+                  {common.teaHouse}
+                </span>
                 <span className="font-cjk text-xl lg:hidden" aria-hidden>
                   {site.cjkName}
                 </span>
               </p>
               <TransitionLink href="/nous-trouver" className="link-infuse inline-block text-[0.95rem] text-papier/85">
-                {site.address.street}, {site.address.district}
+                {site.address.street}, {site.address.district[locale]}
               </TransitionLink>
             </div>
             <p
@@ -220,7 +235,7 @@ export default function Hero() {
               data-enter
               className="text-[0.95rem] leading-snug text-papier/90 max-lg:[@media(max-height:660px)]:hidden sm:col-start-1 lg:col-span-4 lg:col-start-5 lg:row-start-1 lg:text-center lg:text-[1.0625rem]"
             >
-              Des créations gourmandes, colorées et pleines de douceur, au cœur de Paris.
+              {t.tagline}
             </p>
             <div data-fade data-enter className="sm:col-start-2 sm:row-span-2 sm:row-start-1 lg:col-span-4 lg:col-start-9 lg:row-span-1">
               {/* Mobile et tablette : les deux boutons habituels */}
@@ -235,10 +250,10 @@ export default function Hero() {
                   <svg viewBox="0 0 24 24" className="h-[1.1em] w-[1.1em] shrink-0" aria-hidden>
                     <path d="M12 2l8 19-8-4-8 4 8-19z" fill="currentColor" />
                   </svg>
-                  Itinéraire
+                  {common.directions}
                 </a>
                 <TransitionLink href="/la-carte" className="btn btn-ghost-light flex-1 !px-3 sm:!px-5">
-                  La carte <Arrow />
+                  {common.theMenu} <Arrow />
                 </TransitionLink>
               </div>
               {/* Grand écran : l'itinéraire passe par « Nous rendre visite », dans l'en-tête */}
@@ -248,7 +263,7 @@ export default function Hero() {
                 </span>
                 <Magnetic>
                   <TransitionLink href="/la-carte" className="btn btn-sign" style={{ ["--btn-fill" as string]: "#fdf6ea", ["--btn-fg-hover" as string]: "#201409" }}>
-                    Découvrir la carte <Arrow />
+                    {t.discover} <Arrow />
                   </TransitionLink>
                 </Magnetic>
               </div>

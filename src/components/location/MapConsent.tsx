@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { photos } from "@/data/images";
 import { site } from "@/data/site";
+import { useLocale, useT } from "@/i18n/client";
 import { Arrow } from "@/components/ui/motion";
 
 const KEY = "zencca:maps-consent";
@@ -13,6 +14,8 @@ const KEY = "zencca:maps-consent";
  * (service tiers déposant des cookies). Aperçu soigné avant activation.
  */
 export default function MapConsent() {
+  const locale = useLocale();
+  const t = useT().visite;
   const [ok, setOk] = useState(false);
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
@@ -33,8 +36,8 @@ export default function MapConsent() {
         <>
           {!loaded && <div className="absolute inset-0 animate-pulse bg-[#e9e1d2]" aria-hidden />}
           <iframe
-            title="Carte Google Maps : Zencca, 20 rue Tiquetonne, 75002 Paris"
-            src={site.maps.embedUrl}
+            title={t.mapTitle}
+            src={site.maps.embedUrl(locale)}
             className="absolute inset-0 h-full w-full border-0 [filter:sepia(0.18)_saturate(0.9)]"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
@@ -51,16 +54,14 @@ export default function MapConsent() {
               <path d="M24 2C12 2 3 11 3 23c0 16 21 38 21 38s21-22 21-38C45 11 36 2 24 2z" fill="#4d2724" />
               <circle cx="24" cy="23" r="8" fill="#ffd21f" />
             </svg>
-            <p className="font-display t-h3 max-w-[16ch]">Zencca, 20 rue Tiquetonne</p>
-            <p className="max-w-[26rem] text-[0.95rem] text-brun">
-              La carte interactive est fournie par Google Maps, qui peut déposer des cookies. Elle ne se charge qu&apos;après votre accord.
-            </p>
+            <p className="font-display t-h3 max-w-[16ch]">{t.mapHeading}</p>
+            <p className="max-w-[26rem] text-[0.95rem] text-brun">{t.mapConsent}</p>
             <div className="flex flex-wrap justify-center gap-3">
               <button type="button" onClick={accept} className="btn">
-                Afficher la carte
+                {t.mapShow}
               </button>
               <a href={site.maps.placeUrl} target="_blank" rel="noopener noreferrer" className="btn btn-ghost">
-                Ouvrir Google Maps <Arrow dir="up-right" />
+                {t.mapOpen} <Arrow dir="up-right" />
               </a>
             </div>
           </div>

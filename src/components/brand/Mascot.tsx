@@ -2,7 +2,7 @@
 
 import { forwardRef, useCallback, useEffect, useId, useImperativeHandle, useRef } from "react";
 import * as P from "./logo-paths";
-import { cn, prefersReducedMotion } from "@/lib/utils";
+import { cn, isLite, prefersReducedMotion } from "@/lib/utils";
 
 export type MascotHandle = {
   blink: () => void;
@@ -33,6 +33,19 @@ type Props = {
 const CUP_TOP = 786;
 const CUP_BOTTOM = 932;
 
+/** Suit la visibilité à l'écran d'un élément (les effets s'arrêtent quand la mascotte n'est pas vue) */
+function useOnScreen(ref: React.RefObject<Element | null>) {
+  const visible = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => (visible.current = e.isIntersecting));
+    io.observe(el);
+    return () => io.disconnect();
+  }, [ref]);
+  return visible;
+}
+
 const Mascot = forwardRef<MascotHandle, Props>(function Mascot(
   {
     variant = "logo",
@@ -48,13 +61,15 @@ const Mascot = forwardRef<MascotHandle, Props>(function Mascot(
   },
   ref
 ) {
-  const uid = useId().replace(/:/g, "");
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const svgRef = useRef<SVGSVGElement>(null);
   const eyesRef = useRef<SVGGElement>(null);
   const browsRef = useRef<SVGGElement>(null);
   const mouthRef = useRef<SVGGElement>(null);
   const liquidRef = useRef<SVGRectElement>(null);
   const levelRef = useRef(level);
+  const fillRaf = useRef(0);
+  const onScreen = useOnScreen(svgRef);
 
   const yFor = (l: number) => CUP_TOP + (1 - Math.max(0, Math.min(1, l))) * (CUP_BOTTOM - CUP_TOP);
 
@@ -62,10 +77,7 @@ const Mascot = forwardRef<MascotHandle, Props>(function Mascot(
     const eyes = eyesRef.current?.querySelectorAll("path");
     if (!eyes || prefersReducedMotion()) return;
     eyes.forEach((e) =>
-      e.animate(
-        [{ transform: "scaleY(1)" }, { transform: "scaleY(0.08)" }, { transform: "scaleY(1)" }],
-        { duration: 170, easing: "ease-in-out" }
-      )
+      e.animate([{ transform: "scaleY(1)" }, { transform: "scaleY(0.08)" }, { transform: "scaleY(1)" }], { duration: 170, easing: "ease-in-out" })
     );
   }, []);
 
@@ -74,6 +86,7 @@ const Mascot = forwardRef<MascotHandle, Props>(function Mascot(
     const from = yFor(levelRef.current);
     const to = yFor(l);
     levelRef.current = l;
+    cancelAnimationFrame(fillRaf.current);
     if (!rect) return Promise.resolve();
     if (prefersReducedMotion() || duration === 0) {
       rect.setAttribute("y", String(to));
@@ -85,10 +98,10 @@ const Mascot = forwardRef<MascotHandle, Props>(function Mascot(
         const k = Math.min(1, (t - start) / duration);
         const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
         rect.setAttribute("y", String(from + (to - from) * e));
-        if (k < 1) requestAnimationFrame(tick);
+        if (k < 1) fillRaf.current = requestAnimationFrame(tick);
         else resolve();
       };
-      requestAnimationFrame(tick);
+      fillRaf.current = requestAnimationFrame(tick);
     });
   }, []);
 
@@ -121,57 +134,68 @@ const Mascot = forwardRef<MascotHandle, Props>(function Mascot(
 
   useImperativeHandle(ref, () => ({ blink, sip, fill, root: svgRef.current }), [blink, sip, fill]);
 
-  // Clignements aléatoires
+  useEffect(() => () => cancelAnimationFrame(fillRaf.current), []);
+
+  // Clignements aléatoires, seulement quand la mascotte est à l'écran et l'onglet visible
   useEffect(() => {
     if (!autoBlink || prefersReducedMotion()) return;
     let t: ReturnType<typeof setTimeout>;
+    let t2: ReturnType<typeof setTimeout>;
     const loop = () => {
       t = setTimeout(() => {
-        blink();
-        if (Math.random() < 0.25) setTimeout(blink, 260);
+        if (onScreen.current && !document.hidden) {
+          blink();
+          if (Math.random() < 0.25) t2 = setTimeout(blink, 260);
+        }
         loop();
       }, 2600 + Math.random() * 3800);
     };
     loop();
-    return () => clearTimeout(t);
-  }, [autoBlink, blink]);
+    return () => {
+      clearTimeout(t);
+      clearTimeout(t2);
+    };
+  }, [autoBlink, blink, onScreen]);
 
-  // Regard qui suit le pointeur (desktop uniquement)
+  // Regard qui suit le pointeur (desktop uniquement). La position du visage est lue une fois
+  // par image, et seulement quand la mascotte est à l'écran.
   useEffect(() => {
-    if (!followPointer || prefersReducedMotion()) return;
+    if (!followPointer || prefersReducedMotion() || isLite()) return;
     if (!window.matchMedia("(hover: hover)").matches) return;
     const svg = svgRef.current;
     const eyes = eyesRef.current;
     if (!svg || !eyes) return;
     let raf = 0;
-    let tx = 0,
+    let px = 0,
+      py = 0,
+      tx = 0,
       ty = 0,
       cx = 0,
       cy = 0;
-    const onMove = (e: PointerEvent) => {
+    const step = () => {
       const r = svg.getBoundingClientRect();
-      const ex = r.left + r.width * 0.5;
-      const ey = r.top + r.height * 0.42;
-      const dx = e.clientX - ex;
-      const dy = e.clientY - ey;
+      const dx = px - (r.left + r.width * 0.5);
+      const dy = py - (r.top + r.height * 0.42);
       const d = Math.hypot(dx, dy) || 1;
       const k = Math.min(1, d / 500);
       tx = (dx / d) * 9 * k;
       ty = (dy / d) * 7 * k;
-      if (!raf) raf = requestAnimationFrame(step);
-    };
-    const step = () => {
       cx += (tx - cx) * 0.15;
       cy += (ty - cy) * 0.15;
       eyes.setAttribute("transform", `translate(${cx.toFixed(2)} ${cy.toFixed(2)})`);
       raf = Math.abs(tx - cx) + Math.abs(ty - cy) > 0.05 ? requestAnimationFrame(step) : 0;
+    };
+    const onMove = (e: PointerEvent) => {
+      px = e.clientX;
+      py = e.clientY;
+      if (!raf && onScreen.current) raf = requestAnimationFrame(step);
     };
     window.addEventListener("pointermove", onMove, { passive: true });
     return () => {
       window.removeEventListener("pointermove", onMove);
       cancelAnimationFrame(raf);
     };
-  }, [followPointer]);
+  }, [followPointer, onScreen]);
 
   const vbH = variant === "mascot" ? P.MASCOT_BOTTOM : P.LOGO_VIEWBOX.h;
   const hoverProps = hoverReact
@@ -206,21 +230,21 @@ const Mascot = forwardRef<MascotHandle, Props>(function Mascot(
             </clipPath>
           </defs>
           <g clipPath={`url(#cup-${uid})`}>
-            <rect ref={liquidRef} x={540} y={yFor(level)} width={200} height={200} fill={liquid} />
+            <rect ref={liquidRef} data-part="liquid" x={540} y={yFor(level)} width={200} height={200} fill={liquid} />
           </g>
         </>
       )}
       <g fill={P.LOGO_COLOR}>
         <path d={P.body} fillRule="evenodd" />
-        <g ref={browsRef}>
+        <g ref={browsRef} data-part="brows">
           <path d={P.browL} />
           <path d={P.browR} />
         </g>
-        <g ref={eyesRef}>
+        <g ref={eyesRef} data-part="eyes">
           <path d={P.eyeL} style={partStyle} />
           <path d={P.eyeR} style={partStyle} />
         </g>
-        <g ref={mouthRef} style={{ transformBox: "fill-box", transformOrigin: "50% 15%" }}>
+        <g ref={mouthRef} data-part="mouth" style={{ transformBox: "fill-box", transformOrigin: "50% 15%" }}>
           <path d={P.mouth} />
         </g>
         {variant === "logo" && (

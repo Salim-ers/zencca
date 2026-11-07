@@ -3,24 +3,28 @@
  *  ZENCCA — informations centralisées
  *  Tout ce qui est marqué `aValider` doit être confirmé par
  *  l'équipe Zencca avant la mise en ligne définitive.
+ *  Les textes visibles sont écrits en français (fr) et en anglais (en).
  * ─────────────────────────────────────────────────────────────
  */
+import type { L } from "@/i18n/text";
+import type { RouteKey } from "@/i18n/routes";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://zencca.vercel.app").replace(/\/$/, "");
 
 export const site = {
   name: "Zencca",
   cjkName: "甄茶",
-  tagline: "Une rencontre infusée dans le thé.",
-  description:
-    "Zencca, salon de thé au 20 rue Tiquetonne, Paris 2e : matcha, bubble teas, thés aux fruits frais, smoothies au yaourt et créations café & coco.",
+  description: {
+    fr: "Zencca, salon de thé au 20 rue Tiquetonne, Paris 2e : matcha, bubble teas, thés aux fruits frais, smoothies au yaourt et créations café & coco.",
+    en: "Zencca, a tea house at 20 rue Tiquetonne, Paris 2nd: matcha, bubble tea, fresh fruit teas, yogurt smoothies and coffee & coconut creations.",
+  } satisfies L,
   address: {
     street: "20 rue Tiquetonne",
     postalCode: "75002",
     city: "Paris",
-    country: "France",
+    country: { fr: "France", en: "France" } satisfies L,
     countryCode: "FR",
-    district: "Paris 2e",
+    district: { fr: "Paris 2e", en: "Paris 2nd" } satisfies L,
   },
   /** Coordonnées approximatives (rue Tiquetonne) — à confirmer avec la fiche Google. */
   geo: { lat: 48.86498, lng: 2.34783, aValider: true },
@@ -49,8 +53,8 @@ export const site = {
     get appleUrl() {
       return `https://maps.apple.com/?daddr=${encodeURIComponent("20 Rue Tiquetonne, 75002 Paris")}&q=Zencca`;
     },
-    get embedUrl() {
-      return `https://www.google.com/maps?q=${encodeURIComponent(this.query)}&z=17&output=embed`;
+    embedUrl(locale: "fr" | "en") {
+      return `https://www.google.com/maps?q=${encodeURIComponent(this.query)}&z=17&hl=${locale}&output=embed`;
     },
   },
   /**
@@ -58,9 +62,12 @@ export const site = {
    * À vérifier par l'équipe avant publication.
    */
   access: [
-    { label: "Étienne Marcel", lines: "Métro 4" },
-    { label: "Sentier", lines: "Métro 3" },
-    { label: "Châtelet – Les Halles", lines: "RER A, B, D · Métro 1, 4, 7, 11, 14" },
+    { label: "Étienne Marcel", lines: { fr: "Métro 4", en: "Metro line 4" } satisfies L },
+    { label: "Sentier", lines: { fr: "Métro 3", en: "Metro line 3" } satisfies L },
+    {
+      label: "Châtelet – Les Halles",
+      lines: { fr: "RER A, B, D · Métro 1, 4, 7, 11, 14", en: "RER A, B, D · Metro lines 1, 4, 7, 11, 14" } satisfies L,
+    },
   ],
   accessAValider: true,
 } as const;
@@ -69,14 +76,14 @@ export const site = {
  * Horaires — relevés sur la fiche Google « Zencca – Tiquetonne » (capture du 04/11/2026).
  * 0 = dimanche … 6 = samedi. `null` = fermé.
  */
-export const hours: { day: number; label: string; open: string | null; close: string | null }[] = [
-  { day: 1, label: "Lundi", open: "10:30", close: "19:30" },
-  { day: 2, label: "Mardi", open: "10:30", close: "19:30" },
-  { day: 3, label: "Mercredi", open: "10:30", close: "19:30" },
-  { day: 4, label: "Jeudi", open: "10:30", close: "19:30" },
-  { day: 5, label: "Vendredi", open: "10:30", close: "19:30" },
-  { day: 6, label: "Samedi", open: "10:30", close: "19:30" },
-  { day: 0, label: "Dimanche", open: "12:00", close: "19:30" },
+export const hours: { day: number; label: L; open: string | null; close: string | null }[] = [
+  { day: 1, label: { fr: "Lundi", en: "Monday" }, open: "10:30", close: "19:30" },
+  { day: 2, label: { fr: "Mardi", en: "Tuesday" }, open: "10:30", close: "19:30" },
+  { day: 3, label: { fr: "Mercredi", en: "Wednesday" }, open: "10:30", close: "19:30" },
+  { day: 4, label: { fr: "Jeudi", en: "Thursday" }, open: "10:30", close: "19:30" },
+  { day: 5, label: { fr: "Vendredi", en: "Friday" }, open: "10:30", close: "19:30" },
+  { day: 6, label: { fr: "Samedi", en: "Saturday" }, open: "10:30", close: "19:30" },
+  { day: 0, label: { fr: "Dimanche", en: "Sunday" }, open: "12:00", close: "19:30" },
 ];
 export const hoursSource = "Fiche Google, relevé du 04/11/2026 — à confirmer";
 
@@ -86,29 +93,23 @@ export const SHOW_PRICES = true;
 /** Afficher les offres en brouillon (aperçu interne) : NEXT_PUBLIC_PREVIEW_DRAFTS=true */
 export const PREVIEW_DRAFTS = process.env.NEXT_PUBLIC_PREVIEW_DRAFTS === "true";
 
+export type TransitionTheme = "creme" | "matcha" | "sakura" | "ocre" | "store" | "enseigne";
+
 export type NavItem = {
+  key: RouteKey;
+  /** Adresse française ; les liens la traduisent selon la langue de la page */
   href: string;
-  label: string;
-  cjk?: string;
+  label: L;
   theme: TransitionTheme;
 };
 
-export type TransitionTheme = "creme" | "matcha" | "sakura" | "ocre" | "store" | "enseigne";
-
 export const nav: NavItem[] = [
-  { href: "/", label: "Accueil", theme: "creme" },
-  { href: "/la-carte", label: "La carte", theme: "matcha" },
-  { href: "/notre-univers", label: "Notre univers", theme: "ocre" },
-  { href: "/galerie", label: "Galerie", theme: "sakura" },
-  { href: "/nouveautes", label: "Nouveautés", theme: "enseigne" },
-  { href: "/nous-trouver", label: "Nous trouver", theme: "store" },
+  { key: "home", href: "/", label: { fr: "Accueil", en: "Home" }, theme: "creme" },
+  { key: "carte", href: "/la-carte", label: { fr: "La carte", en: "Menu" }, theme: "matcha" },
+  { key: "univers", href: "/notre-univers", label: { fr: "Notre univers", en: "Our world" }, theme: "ocre" },
+  { key: "galerie", href: "/galerie", label: { fr: "Galerie", en: "Gallery" }, theme: "sakura" },
+  { key: "nouveautes", href: "/nouveautes", label: { fr: "Nouveautés", en: "What's new" }, theme: "enseigne" },
+  { key: "visite", href: "/nous-trouver", label: { fr: "Nous trouver", en: "Find us" }, theme: "store" },
 ];
 
-export function themeFor(href: string): TransitionTheme {
-  const path = href.split(/[?#]/)[0] || "/";
-  return nav.find((n) => n.href === path)?.theme ?? "creme";
-}
-export function labelFor(href: string): string {
-  const path = href.split(/[?#]/)[0] || "/";
-  return nav.find((n) => n.href === path)?.label ?? "Zencca";
-}
+export const navItem = (key: RouteKey | null) => nav.find((n) => n.key === key);

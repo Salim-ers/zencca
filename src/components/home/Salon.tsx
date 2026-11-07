@@ -6,17 +6,20 @@ import TransitionLink from "@/components/transition/TransitionLink";
 import { Arrow, Magnetic, RevealText } from "@/components/ui/motion";
 import { photos, type PhotoKey } from "@/data/images";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { cn } from "@/lib/utils";
+import { cn, previewOf } from "@/lib/utils";
+import { useLocale, useT } from "@/i18n/client";
 
-const frames: { photo: PhotoKey; caption: string; w: string; h: string; shape: string; offset: string }[] = [
-  { photo: "facadeTerrasse", caption: "La façade ocre et ses chaises de terrasse", w: "lg:w-[34vw]", h: "lg:h-[72vh]", shape: "tuile", offset: "lg:self-end" },
-  { photo: "enseigne", caption: "L'enseigne jaune, repère de la rue", w: "lg:w-[22vw]", h: "lg:h-[46vh]", shape: "rounded-[2rem]", offset: "lg:self-start lg:mt-[8vh]" },
-  { photo: "salonFresque", caption: "Plafond lumineux, banc en bois et fresque fleurie", w: "lg:w-[30vw]", h: "lg:h-[62vh]", shape: "tuile-d", offset: "lg:self-center" },
-  { photo: "facadeJour", caption: "Portes en bois grandes ouvertes sur le comptoir", w: "lg:w-[26vw]", h: "lg:h-[52vh]", shape: "rounded-[2rem]", offset: "lg:self-end lg:mb-[4vh]" },
+const frames: { photo: PhotoKey; w: string; h: string; shape: string; offset: string }[] = [
+  { photo: "facadeTerrasse", w: "lg:w-[34vw]", h: "lg:h-[72vh]", shape: "tuile", offset: "lg:self-end" },
+  { photo: "enseigne", w: "lg:w-[22vw]", h: "lg:h-[46vh]", shape: "rounded-[2rem]", offset: "lg:self-start lg:mt-[8vh]" },
+  { photo: "salonFresque", w: "lg:w-[30vw]", h: "lg:h-[62vh]", shape: "tuile-d", offset: "lg:self-center" },
+  { photo: "facadeJour", w: "lg:w-[26vw]", h: "lg:h-[52vh]", shape: "rounded-[2rem]", offset: "lg:self-end lg:mb-[4vh]" },
 ];
 
 export default function Salon() {
   const root = useRef<HTMLElement>(null);
+  const locale = useLocale();
+  const t = useT().salon;
 
   useGSAP(
     () => {
@@ -66,18 +69,18 @@ export default function Salon() {
             <p className="font-cjk text-xl text-store" aria-hidden>
               甄茶
             </p>
-            <RevealText as="h2" id="salon-title" className="font-display t-h1 mt-3" lines={["Le salon", "de thé"]} />
+            <RevealText as="h2" id="salon-title" className="font-display t-h1 mt-3" lines={t.title} />
             <p className="t-lead mt-6 max-w-[24rem] text-brun">
-              Au 20 rue Tiquetonne : une façade ocre, des arches, un sol en terrazzo et une grande fresque bleue.
+              {t.lead}
             </p>
             <Magnetic className="mt-8 self-start">
               <TransitionLink href="/notre-univers" className="btn">
-                Découvrir notre univers <Arrow />
+                {t.cta} <Arrow />
               </TransitionLink>
             </Magnetic>
           </div>
 
-          {frames.map((f) => (
+          {frames.map((f, i) => (
             <figure
               key={f.photo}
               className={cn("flex shrink-0 snap-center flex-col", "w-[74vw] sm:w-[48vw]", f.w, f.offset)}
@@ -92,16 +95,16 @@ export default function Salon() {
                 <div data-frame-img className="absolute -inset-x-[10%] inset-y-0">
                   <Image
                     src={photos[f.photo].src}
-                    alt={photos[f.photo].alt}
+                    alt={photos[f.photo].alt[locale]}
                     fill
                     sizes="(min-width: 1024px) 36vw, 74vw"
-                    placeholder="blur"
+                    placeholder={previewOf(photos[f.photo].src)}
                     className="object-cover"
                     style={{ objectPosition: photos[f.photo].focus }}
                   />
                 </div>
               </div>
-              <figcaption className="mt-4 max-w-[22rem] text-[0.95rem] text-brun">{f.caption}</figcaption>
+              <figcaption className="mt-4 max-w-[22rem] text-[0.95rem] text-brun">{t.captions[i]}</figcaption>
             </figure>
           ))}
           <div aria-hidden className="w-[2vw] shrink-0" />

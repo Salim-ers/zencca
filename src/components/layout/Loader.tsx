@@ -1,21 +1,24 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Mascot, { type MascotHandle } from "@/components/brand/Mascot";
-import { WaveEdge } from "@/components/ui/Strata";
-import { gsap } from "@/lib/gsap";
+import Mascot from "@/components/brand/Mascot";
 import { markRevealed } from "@/lib/ready";
 
 const KEY = "zencca:intro";
+/** Durée de la séquence CSS (apparition, gorgée, logotype) avant que l'écran se lève */
+const INTRO_MS = 1250;
+const LIFT_MS = 750;
+const LIFT_EASE = "cubic-bezier(0.83, 0, 0.17, 1)";
 
 /**
- * Écran d'intro : rendu côté serveur (pas de flash), joué une seule fois
- * par session. La mascotte boit une gorgée, le logotype apparaît,
- * une vague d'infusion monte puis dévoile la page.
+ * Écran d'intro : un écran blanc rendu côté serveur, joué une seule fois par session.
+ * La séquence (la mascotte apparaît, cligne, boit une gorgée, le logotype monte) est
+ * jouée en CSS dès le premier affichage, pendant que la page se charge : elle ne
+ * s'ajoute plus au temps de chargement. Une fois la page prête, l'écran se lève
+ * (animation gérée par le compositeur, fluide même si la page travaille encore).
  */
 export default function Loader() {
   const ref = useRef<HTMLDivElement>(null);
-  const mascot = useRef<MascotHandle>(null);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -31,70 +34,61 @@ export default function Loader() {
       markRevealed();
       return;
     }
-    if (root.classList.contains("reduced")) {
-      gsap.to(el, { autoAlpha: 0, duration: 0.4, delay: 0.3, onComplete: finish });
+    // Garde-fou déjà déclenché (page très lente) : l'écran a été effacé, on n'insiste pas
+    if (root.classList.contains("intro-done")) {
+      finish();
       markRevealed();
       return;
     }
+    if (root.classList.contains("reduced") || typeof el.animate !== "function") {
+      el.style.transition = "opacity .4s ease .3s, visibility 0s linear .7s";
+      el.style.opacity = "0";
+      el.style.visibility = "hidden";
+      const t = setTimeout(finish, 700);
+      markRevealed();
+      return () => clearTimeout(t);
+    }
 
-    const letters = el.querySelectorAll<SVGPathElement>("[data-letters] path");
-    const waves = el.querySelectorAll<HTMLElement>("[data-wave]");
-    const svg = mascot.current?.root;
-    gsap.set(letters, { yPercent: 60, opacity: 0, transformBox: "fill-box" });
-    gsap.set(el.querySelector("[data-letters]"), { opacity: 1 });
-    gsap.set(waves, { yPercent: 100 });
+    // Temps déjà écoulé dans la séquence CSS
+    const svg = el.querySelector("svg");
+    const anim = svg?.getAnimations?.()[0];
+    const now = document.timeline?.currentTime;
+    const elapsed = anim?.startTime != null && typeof now === "number" ? now - Number(anim.startTime) : 0;
+    const wait = Math.max(0, INTRO_MS - elapsed);
 
-    let started = false;
-    const run = () => {
-      if (started) return;
-      started = true;
-      const tl = gsap.timeline();
-      tl.fromTo(svg!, { scale: 0.86, autoAlpha: 0, y: 20 }, { scale: 1, autoAlpha: 1, y: 0, duration: 0.55, ease: "back.out(1.6)" })
-        .add(() => mascot.current?.blink(), 0.35)
-        .add(() => void mascot.current?.sip({ duration: 600, refill: false }), 0.4)
-        .to(letters, { yPercent: 0, opacity: 1, duration: 0.45, stagger: 0.04, ease: "back.out(2)" }, 0.5)
-        .to(waves, { yPercent: 0, duration: 0.7, stagger: 0.06, ease: "power3.inOut" }, 0.95)
-        .to(el, { yPercent: -100, duration: 0.75, ease: "power4.inOut" }, 1.4)
-        .to(el.querySelector("[data-stage]"), { yPercent: 30, duration: 0.75, ease: "power4.inOut" }, 1.4)
-        .add(() => markRevealed(), 1.6)
-        .add(finish);
+    let cancelled = false;
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    const animations: Animation[] = [];
+    const lift = () => {
+      if (cancelled) return;
+      const opts: KeyframeAnimationOptions = { duration: LIFT_MS, easing: LIFT_EASE, fill: "forwards" };
+      animations.push(
+        el.animate([{ transform: "translateY(0)" }, { transform: "translateY(-100%)" }], opts),
+        el.querySelector("[data-stage]")!.animate([{ transform: "translateY(0)" }, { transform: "translateY(30%)" }], opts)
+      );
+      timers.push(setTimeout(markRevealed, 200), setTimeout(finish, LIFT_MS));
     };
-    // L'animation démarre une fois le navigateur libre : elle ne se bat pas avec le démarrage de la page
-    const start = () => {
-      if (window.requestIdleCallback) window.requestIdleCallback(run, { timeout: 250 });
-      else requestAnimationFrame(run);
+    // Si la page est prête avant la fin de la séquence, on attend ; sinon on lève dès que le navigateur respire
+    let idle = 0;
+    if (wait > 0) timers.push(setTimeout(lift, wait));
+    else if (window.requestIdleCallback) idle = window.requestIdleCallback(lift, { timeout: 150 });
+    else timers.push(setTimeout(lift, 16));
+
+    return () => {
+      cancelled = true;
+      if (idle) window.cancelIdleCallback(idle);
+      timers.forEach(clearTimeout);
+      animations.forEach((a) => a.cancel());
     };
-    // On attend les polices (au plus 500 ms) pour éviter tout saut
-    const t = setTimeout(start, 500);
-    document.fonts?.ready.then(() => {
-      clearTimeout(t);
-      start();
-    });
-    return () => clearTimeout(t);
   }, []);
 
   return (
-    <div
-      id="zencca-intro"
-      ref={ref}
-      className="fixed inset-0 z-[100] bg-creme will-change-transform"
-      role="presentation"
-      aria-hidden
-    >
+    <div id="zencca-intro" ref={ref} className="fixed inset-0 z-[100] bg-white will-change-transform" role="presentation" aria-hidden>
       <div data-stage className="absolute inset-0 flex items-center justify-center">
         <div className="w-[min(56vw,300px)] 3xl:w-[380px]">
-          <Mascot ref={mascot} variant="logo" liquid="#a9bd6e" level={0.9} autoBlink={false} hideLetters decorative />
+          <Mascot variant="logo" liquid="#a9bd6e" level={0.9} autoBlink={false} decorative />
         </div>
       </div>
-      {/* Vague d'infusion */}
-      {["#dfe5c3", "#a9bd6e", "#e6b465"].map((c, i) => (
-        <div key={c} data-wave className="absolute inset-x-0 bottom-0 h-[38vh]" style={{ zIndex: 1 + i, height: `${34 - i * 9}vh` }}>
-          <WaveEdge color={c} variant={i + 1} className="absolute inset-x-0 bottom-full h-14 w-full md:h-20" />
-          <div className="absolute inset-0" style={{ background: c }} />
-        </div>
-      ))}
-      {/* Bord inférieur ondulé lorsque l'écran se lève */}
-      <WaveEdge color="#e6b465" variant={2} className="absolute inset-x-0 top-full h-16 w-full rotate-180 md:h-24" />
     </div>
   );
 }

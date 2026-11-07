@@ -15,7 +15,7 @@ export default function HeroCluster({ items }: { items: [PhotoKey, PhotoKey, Pho
             shape={i === 1 ? "tuile-d" : "tuile"}
             trigger="reveal"
             delay={0.15 + i * 0.12}
-            priority={i === 1}
+            eager={i === 1}
             className="aspect-[3/4.4] w-full [--coin:1.6rem] [--tuile-r:0.7rem]"
           />
         </Parallax>

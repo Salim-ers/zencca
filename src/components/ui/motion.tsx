@@ -2,52 +2,12 @@
 
 import Image from "next/image";
 import { createElement, useEffect, useRef } from "react";
-import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
+import { gsap, useGSAP } from "@/lib/gsap";
 import { onReveal } from "@/lib/ready";
-import { cn, isTouch, prefersReducedMotion } from "@/lib/utils";
+import { onVisible } from "@/lib/visible";
+import { cn, isLite, isTouch, prefersReducedMotion, previewOf } from "@/lib/utils";
+import { useLocale } from "@/i18n/client";
 import type { Photo } from "@/data/images";
-
-/* ──────────────────────────────────────────────────────────────
-   Photo — next/image avec point focal desktop / mobile
-────────────────────────────────────────────────────────────── */
-export function Pic({
-  photo,
-  sizes,
-  priority,
-  className,
-  imgClassName,
-  quality,
-  alt,
-}: {
-  photo: Photo;
-  sizes: string;
-  priority?: boolean;
-  className?: string;
-  imgClassName?: string;
-  quality?: 75 | 85;
-  alt?: string;
-}) {
-  return (
-    <div className={cn("relative overflow-hidden", className)}>
-      <Image
-        src={photo.src}
-        alt={alt ?? photo.alt}
-        fill
-        sizes={sizes}
-        priority={priority}
-        quality={quality ?? 75}
-        placeholder="blur"
-        className={cn("object-cover", imgClassName)}
-        style={
-          {
-            objectPosition: photo.focus ?? "50% 50%",
-            ["--focus-m" as string]: photo.focusMobile ?? photo.focus,
-          } as React.CSSProperties
-        }
-      />
-    </div>
-  );
-}
 
 /* ──────────────────────────────────────────────────────────────
    InfuseImage — l'image se remplit de bas en haut,
@@ -58,7 +18,7 @@ export function InfuseImage({
   sizes,
   className,
   shape = "tuile",
-  priority,
+  eager,
   parallax = 0,
   trigger = "scroll",
   delay = 0,
@@ -70,7 +30,8 @@ export function InfuseImage({
   sizes: string;
   className?: string;
   shape?: "tuile" | "tuile-d" | "soft" | "none";
-  priority?: boolean;
+  /** Image du premier écran : chargée tout de suite, en priorité */
+  eager?: boolean;
   /** amplitude du parallaxe interne en % (0 = aucun) */
   parallax?: number;
   /** "scroll" : au défilement ; "reveal" : avec l'entrée de page */
@@ -81,8 +42,9 @@ export function InfuseImage({
   children?: React.ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const locale = useLocale();
   useGSAP(
-    () => {
+    (_ctx, contextSafe) => {
       const el = ref.current!;
       const inner = el.querySelector<HTMLElement>("[data-inner]")!;
       const counter = el.querySelector<HTMLElement>("[data-counter]")!;
@@ -93,7 +55,7 @@ export function InfuseImage({
       gsap.set(inner, { yPercent: 100 });
       gsap.set(counter, { yPercent: -100 });
       if (zoom) gsap.set(img, { scale: 1.22 });
-      const play = () =>
+      const play = contextSafe!(() => {
         gsap
           .timeline({
             delay,
@@ -103,11 +65,9 @@ export function InfuseImage({
           .to(inner, { yPercent: 0, duration: 1.1, ease: "expo.inOut" }, 0)
           .to(counter, { yPercent: 0, duration: 1.1, ease: "expo.inOut" }, 0)
           .to(img, { scale: 1, duration: 1.5, ease: "expo.out" }, 0.1);
-      if (trigger === "reveal") {
-        return onReveal(play);
-      }
-      ScrollTrigger.create({ trigger: el, start: "top 88%", once: true, onEnter: play });
-      if (parallax) {
+      });
+      const off = trigger === "reveal" ? onReveal(play) : onVisible(el, play);
+      if (parallax && !isLite()) {
         gsap.fromTo(
           img.parentElement!,
           { yPercent: -parallax },
@@ -118,6 +78,7 @@ export function InfuseImage({
           }
         );
       }
+      return off;
     },
     { scope: ref }
   );
@@ -137,11 +98,12 @@ export function InfuseImage({
                 >
                   <Image
                     src={photo.src}
-                    alt={photo.alt}
+                    alt={photo.alt[locale]}
                     fill
                     sizes={sizes}
-                    priority={priority}
-                    placeholder="blur"
+                    loading={eager ? "eager" : undefined}
+                    fetchPriority={eager ? "high" : undefined}
+                    placeholder={previewOf(photo.src)}
                     className="object-cover"
                     style={{ objectPosition: photo.focus ?? "50% 50%" }}
                   />
@@ -182,38 +144,37 @@ export function RevealText({
 }) {
   const ref = useRef<HTMLElement>(null);
   useGSAP(
-    () => {
+    (_ctx, contextSafe) => {
       const words = gsap.utils.toArray<HTMLElement>("[data-w]", ref.current);
       if (prefersReducedMotion()) return;
       gsap.set(words, { yPercent: 110, rotate: 4 });
-      const play = () => {
+      const play = contextSafe!(() => {
         gsap.set(ref.current, { visibility: "visible" });
         gsap.to(words, { yPercent: 0, rotate: 0, duration: 1.1, stagger, ease: "expo.out", delay });
-      };
-      if (trigger === "reveal") return onReveal(play);
-      ScrollTrigger.create({ trigger: ref.current, start: "top 85%", once: true, onEnter: play });
+      });
+      return trigger === "reveal" ? onReveal(play) : onVisible(ref.current, play, 0.15);
     },
     { scope: ref }
   );
   return createElement(
     as,
     { ref, className, id, "aria-label": lines.join(" "), "data-enter": trigger === "reveal" ? "" : undefined },
-    lines.map((line, li) => (
-      <span
-        key={li}
-        aria-hidden
-        className={cn("block", Array.isArray(lineClassName) ? lineClassName[li] : lineClassName)}
-      >
-        {line.split(" ").map((w, wi) => (
-          <span key={wi} className="inline-block overflow-hidden pb-[0.12em] -mb-[0.12em] align-bottom">
-            <span data-w className="inline-block">
-              {w}
-              {wi < line.split(" ").length - 1 ? " " : ""}
+    lines.map((line, li) => {
+      const words = line.split(" ");
+      return (
+        <span key={li} aria-hidden className={cn("block", Array.isArray(lineClassName) ? lineClassName[li] : lineClassName)}>
+          {words.map((w, wi) => (
+            <span key={wi} className="inline-block overflow-hidden pb-[0.12em] -mb-[0.12em] align-bottom">
+              <span data-w className="inline-block">
+                {w}
+                {/* Espace insécable : une espace normale serait supprimée en fin de bloc inline-block */}
+                {wi < words.length - 1 ? " " : ""}
+              </span>
             </span>
-          </span>
-        ))}
-      </span>
-    ))
+          ))}
+        </span>
+      );
+    })
   );
 }
 
@@ -234,7 +195,7 @@ export function Parallax({
   const ref = useRef<HTMLDivElement>(null);
   useGSAP(
     () => {
-      if (prefersReducedMotion() || (disableOnTouch && isTouch())) return;
+      if (prefersReducedMotion() || isLite() || (disableOnTouch && isTouch())) return;
       gsap.fromTo(
         ref.current,
         { y: () => -speed * 180 },
@@ -272,16 +233,13 @@ export function FadeIn({
 }) {
   const ref = useRef<HTMLElement>(null);
   useGSAP(
-    () => {
+    (_ctx, contextSafe) => {
       if (prefersReducedMotion()) return;
-      gsap.from(ref.current, {
-        autoAlpha: 0,
-        y,
-        duration: 1,
-        delay,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ref.current, start: "top 90%", once: true },
+      gsap.set(ref.current, { autoAlpha: 0, y });
+      const play = contextSafe!(() => {
+        gsap.to(ref.current, { autoAlpha: 1, y: 0, duration: 1, delay, ease: "power3.out" });
       });
+      return onVisible(ref.current, play, 0.1);
     },
     { scope: ref }
   );
@@ -298,20 +256,35 @@ export function Magnetic({ children, strength = 0.28, className }: { children: R
     if (!el || prefersReducedMotion() || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
     const xTo = gsap.quickTo(el, "x", { duration: 0.6, ease: "elastic.out(1, 0.45)" });
     const yTo = gsap.quickTo(el, "y", { duration: 0.6, ease: "elastic.out(1, 0.45)" });
-    const move = (e: PointerEvent) => {
+    // Centre mesuré à l'entrée du pointeur (et non à chaque mouvement) : pas de lecture de mise en page en continu
+    let cx = 0;
+    let cy = 0;
+    const enter = () => {
       const r = el.getBoundingClientRect();
-      xTo((e.clientX - (r.left + r.width / 2)) * strength);
-      yTo((e.clientY - (r.top + r.height / 2)) * strength);
+      const x = Number(gsap.getProperty(el, "x")) || 0;
+      const y = Number(gsap.getProperty(el, "y")) || 0;
+      cx = r.left - x + r.width / 2;
+      cy = r.top - y + r.height / 2;
+    };
+    const move = (e: PointerEvent) => {
+      xTo((e.clientX - cx) * strength);
+      yTo((e.clientY - cy) * strength);
     };
     const leave = () => {
       xTo(0);
       yTo(0);
     };
+    el.addEventListener("pointerenter", enter);
     el.addEventListener("pointermove", move);
     el.addEventListener("pointerleave", leave);
     return () => {
+      el.removeEventListener("pointerenter", enter);
       el.removeEventListener("pointermove", move);
       el.removeEventListener("pointerleave", leave);
+      // quickTo garde une animation en pause dans la timeline globale de GSAP :
+      // sans la détruire, elle retient l'élément — et toute l'ancienne page — après navigation.
+      (xTo as unknown as { tween: gsap.core.Tween }).tween.kill();
+      (yTo as unknown as { tween: gsap.core.Tween }).tween.kill();
     };
   }, [strength]);
   return (
@@ -322,10 +295,10 @@ export function Magnetic({ children, strength = 0.28, className }: { children: R
 }
 
 /* Flèche maison (pas de caractère « → ») */
-export function Arrow({ className, dir = "right" }: { className?: string; dir?: "right" | "up-right" | "down" }) {
-  const rot = dir === "up-right" ? -45 : dir === "down" ? 90 : 0;
+export function Arrow({ className, dir = "right" }: { className?: string; dir?: "right" | "left" | "up-right" | "down" }) {
+  const rot = { right: 0, left: 180, "up-right": -45, down: 90 }[dir];
   return (
-    <svg viewBox="0 0 24 24" className={cn("btn-arrow h-[1.05em] w-[1.05em] shrink-0", className)} aria-hidden style={{ rotate: `${rot}deg` }}>
+    <svg viewBox="0 0 24 24" className={cn("btn-arrow h-[1.05em] w-[1.05em] shrink-0", className)} aria-hidden style={rot ? { rotate: `${rot}deg` } : undefined}>
       <path d="M4 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );

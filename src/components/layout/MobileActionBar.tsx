@@ -1,34 +1,47 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import TransitionLink from "@/components/transition/TransitionLink";
 import { site } from "@/data/site";
-import { scrollToEl } from "@/lib/lenis";
+import { useRouteKey, useT } from "@/i18n/client";
+import { scrollToEl } from "@/lib/scroll";
 import { cn } from "@/lib/utils";
 
 /** Barre d'action mobile et tablette : itinéraire + accès à la carte, toujours à portée de pouce. */
 export default function MobileActionBar() {
-  const pathname = usePathname();
+  const key = useRouteKey();
+  const t = useT().common;
   const [visible, setVisible] = useState(false);
-  const onLocation = pathname === "/nous-trouver";
+  const onLocation = key === "visite";
+  const onMenu = key === "carte";
 
   useEffect(() => {
     let footerVisible = false;
+    let raf = 0;
+    let shown = false;
+    const check = () => {
+      raf = 0;
+      const v = window.scrollY > window.innerHeight * (onLocation ? 0.15 : 0.6) && !footerVisible;
+      if (v !== shown) setVisible((shown = v));
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(check);
+    };
     const footer = document.querySelector("[data-footer]");
     const io = new IntersectionObserver(([e]) => {
       footerVisible = e.isIntersecting;
       check();
     });
     if (footer) io.observe(footer);
-    const check = () => setVisible(window.scrollY > window.innerHeight * (onLocation ? 0.15 : 0.6) && !footerVisible);
+    setVisible(false);
     check();
-    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
-      window.removeEventListener("scroll", check);
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(raf);
       io.disconnect();
     };
-  }, [onLocation, pathname]);
+  }, [onLocation, key]);
 
   return (
     <div
@@ -49,7 +62,7 @@ export default function MobileActionBar() {
           <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden>
             <path d="M12 2l8 19-8-4-8 4 8-19z" fill="currentColor" />
           </svg>
-          Itinéraire
+          {t.directions}
         </a>
         {onLocation ? (
           <button
@@ -58,15 +71,15 @@ export default function MobileActionBar() {
             onClick={() => scrollToEl("#carte")}
             className="flex h-12 flex-1 items-center justify-center rounded-full font-semibold text-papier active:scale-[0.97]"
           >
-            Voir la carte
+            {t.seeMap}
           </button>
         ) : (
           <TransitionLink
-            href={pathname === "/la-carte" ? "/nous-trouver" : "/la-carte"}
+            href={onMenu ? "/nous-trouver" : "/la-carte"}
             tabIndex={visible ? 0 : -1}
             className="flex h-12 flex-1 items-center justify-center rounded-full font-semibold text-papier active:scale-[0.97]"
           >
-            {pathname === "/la-carte" ? "Nous trouver" : "La carte"}
+            {onMenu ? t.findUs : t.theMenu}
           </TransitionLink>
         )}
       </div>

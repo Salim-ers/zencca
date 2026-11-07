@@ -6,21 +6,25 @@ import { useCallback, useMemo, useState } from "react";
 import Lightbox from "./Lightbox";
 import { gallery, galleryCategories, type GalleryCategory } from "@/data/gallery";
 import { photos } from "@/data/images";
-import { cn } from "@/lib/utils";
+import { useLocale, useT } from "@/i18n/client";
+import { cn, previewOf } from "@/lib/utils";
 
 const shapes = ["rounded-[1.1rem]", "tuile", "rounded-[1.1rem]", "tuile-d", "tuile", "rounded-[1.1rem]"];
 
 export default function Gallery() {
+  const locale = useLocale();
+  const t = useT().galerie;
   const [filter, setFilter] = useState<GalleryCategory | "tout">("tout");
   const [open, setOpen] = useState<number | null>(null);
   const reduce = useReducedMotion();
   const items = useMemo(() => (filter === "tout" ? gallery : gallery.filter((g) => g.category === filter)), [filter]);
   const close = useCallback(() => setOpen(null), []);
+  const tabs = [{ id: "tout" as const, label: t.all }, ...galleryCategories.map((c) => ({ id: c.id, label: c.label[locale] }))];
 
   return (
     <div className="wrap pb-32">
-      <div role="group" aria-label="Filtrer la galerie" className="no-scrollbar -mx-[var(--gutter)] mb-10 flex gap-2 overflow-x-auto px-[var(--gutter)]">
-        {[{ id: "tout" as const, label: "Tout voir" }, ...galleryCategories].map((c) => {
+      <div role="group" aria-label={t.filterAria} className="no-scrollbar -mx-[var(--gutter)] mb-10 flex gap-2 overflow-x-auto px-[var(--gutter)]">
+        {tabs.map((c) => {
           const on = filter === c.id;
           return (
             <button
@@ -62,19 +66,19 @@ export default function Gallery() {
                   type="button"
                   onClick={() => setOpen(i)}
                   className={cn("group relative block h-full w-full overflow-hidden", shapes[i % shapes.length])}
-                  aria-label={`Agrandir : ${g.caption}`}
+                  aria-label={t.enlarge(g.caption[locale])}
                 >
                   <Image
                     src={ph.src}
-                    alt={ph.alt}
+                    alt={ph.alt[locale]}
                     fill
-                    placeholder="blur"
+                    placeholder={previewOf(ph.src)}
                     sizes={g.span === "wide" ? "(min-width: 1280px) 50vw, (min-width: 768px) 66vw, 100vw" : "(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 50vw"}
                     className="object-cover transition-transform duration-[1.4s] ease-[var(--ease-soft)] group-hover:scale-[1.06]"
                     style={{ objectPosition: ph.focus }}
                   />
                   <span className="pointer-events-none absolute bottom-3 left-3 right-3 translate-y-3 rounded-full bg-papier/95 px-4 py-2 text-left text-sm font-medium text-encre opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 max-md:hidden">
-                    {g.caption}
+                    {g.caption[locale]}
                   </span>
                 </button>
               </motion.li>

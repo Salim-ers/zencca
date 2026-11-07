@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import { photos } from "@/data/images";
 import { categoryById, type Product } from "@/data/products";
-import { cn } from "@/lib/utils";
+import { useLocale, useT } from "@/i18n/client";
+import { cn, previewOf } from "@/lib/utils";
 
 /**
  * Visuel produit : le visuel de la carte s'il existe, sinon une composition
@@ -12,13 +15,16 @@ export default function ProductVisual({
   product,
   sizes,
   className,
-  priority,
+  eager,
 }: {
   product: Product;
   sizes: string;
   className?: string;
-  priority?: boolean;
+  /** Chargée tout de suite, en priorité (fiche ouverte) */
+  eager?: boolean;
 }) {
+  const locale = useLocale();
+  const t = useT().carte;
   const cat = categoryById(product.category);
   const rootCls = cn(!className?.includes("absolute") && "relative", "[--coin:clamp(3rem,4.8vw,5rem)]", className);
   const code = product.code && (
@@ -33,11 +39,12 @@ export default function ProductVisual({
         <div className="tuile absolute inset-0" style={{ background: cat.tint }}>
           <Image
             src={ph.src}
-            alt={ph.alt}
+            alt={ph.alt[locale]}
             fill
             sizes={sizes}
-            priority={priority}
-            placeholder="blur"
+            loading={eager ? "eager" : undefined}
+            fetchPriority={eager ? "high" : undefined}
+            placeholder={previewOf(ph.src)}
             className="object-cover transition-transform duration-[1.2s] ease-[var(--ease-soft)] group-hover:scale-[1.05]"
             style={{ objectPosition: ph.focus }}
           />
@@ -47,7 +54,7 @@ export default function ProductVisual({
     );
   }
   return (
-    <div className={rootCls} role="img" aria-label={`Couleurs de la boisson ${product.name}`}>
+    <div className={rootCls} role="img" aria-label={t.visualAria(product.name[locale])}>
       <div className="tuile absolute inset-0 flex items-center justify-center" style={{ background: cat.tint }}>
         <svg viewBox="0 0 200 260" className="h-[78%] w-auto" aria-hidden>
           <defs>

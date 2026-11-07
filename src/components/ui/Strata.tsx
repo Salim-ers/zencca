@@ -54,16 +54,16 @@ export function StrataDivider({
     () => {
       if (prefersReducedMotion()) return;
       const els = gsap.utils.toArray<HTMLElement>("[data-layer]", ref.current);
+      // Une seule timeline (et un seul déclencheur) pour toutes les couches
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: ref.current, start: "top bottom", end: "bottom 40%", scrub: 0.6 },
+      });
       els.forEach((el, i) => {
-        gsap.fromTo(
+        tl.fromTo(
           el,
           { xPercent: i % 2 ? -6 : 0, yPercent: 30 + i * 18 },
-          {
-            xPercent: i % 2 ? 0 : -6,
-            yPercent: 0,
-            ease: "none",
-            scrollTrigger: { trigger: ref.current, start: "top bottom", end: "bottom 40%", scrub: 0.6 },
-          }
+          { xPercent: i % 2 ? 0 : -6, yPercent: 0, ease: "none" },
+          0
         );
       });
     },

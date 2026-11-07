@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import SizePrices from "@/components/carte/SizePrices";
 import TempTags from "@/components/carte/TempTags";
 import LayerPill from "@/components/ui/LayerPill";
+import { useLocale, useT } from "@/i18n/client";
 
 type Piece = {
   slug: string;
@@ -63,16 +64,18 @@ const pieces: Piece[] = [
 ];
 
 export default function Creations() {
+  const locale = useLocale();
+  const t = useT().creations;
   return (
     <section aria-labelledby="creations-title" data-tint="#fdf6ea" className="relative bg-papier pb-28 pt-16 lg:pb-44 lg:pt-24">
       <div className="wrap grid grid-cols-1 gap-x-8 gap-y-20 lg:grid-cols-12 lg:gap-y-0">
         <div className="lg:col-span-5 lg:col-start-1 lg:row-start-1 lg:pt-10">
-          <RevealText as="h2" id="creations-title" className="font-display t-h1" lines={["Nos", "créations"]} />
+          <RevealText as="h2" id="creations-title" className="font-display t-h1" lines={t.title} />
           <p className="t-lead measure mt-6 text-brun">
-            Matcha, fruits frais, coco et café. Chaque boisson se construit en couches, et chacune a sa couleur.
+            {t.lead}
           </p>
           <TransitionLink href="/la-carte" className="btn btn-ghost mt-8">
-            Voir toute la carte <Arrow />
+            {t.seeAll} <Arrow />
           </TransitionLink>
         </div>
 
@@ -84,7 +87,7 @@ export default function Creations() {
                 <TransitionLink
                   href={`/la-carte?boisson=${p.slug}`}
                   theme="matcha"
-                  transitionLabel={prod.name}
+                  transitionLabel={prod.name[locale]}
                   className={cn("group block", p.align === "right" && "lg:text-right")}
                 >
                   <div className={cn("relative mx-auto w-[86%] sm:w-[70%] lg:w-full", p.align === "right" ? "ml-auto mr-0" : "ml-0")}>
@@ -115,15 +118,15 @@ export default function Creations() {
                             {prod.cjk}
                           </p>
                         )}
-                        <h3 className="font-display t-h3 mt-0.5">{prod.name}</h3>
+                        <h3 className="font-display t-h3 mt-0.5">{prod.name[locale]}</h3>
                       </div>
                     </div>
-                    <p className="mt-3 text-brun">{prod.description}</p>
+                    <p className="mt-3 text-brun">{prod.description[locale]}</p>
                     <div className={cn("mt-4 flex flex-wrap items-center gap-x-4 gap-y-2", p.align === "right" && "lg:justify-end")}>
                       <TempTags temps={prod.temps} />
                       <SizePrices product={prod} className="text-[0.95rem]" />
                       <span className="inline-flex items-center gap-1.5 font-semibold">
-                        <span className="link-infuse group-hover:[background-size:100%_1.5px]">Voir la boisson</span>
+                        <span className="link-infuse group-hover:[background-size:100%_1.5px]">{t.seeDrink}</span>
                         <Arrow />
                       </span>
                     </div>
@@ -141,7 +144,7 @@ export default function Creations() {
               <Image src={photos.pMatchaLatte.src} alt="" fill sizes="80px" className="object-cover" />
             </div>
             <figcaption className="text-brun">
-              En 500 ml ou 700 ml, avec perles de tapioca, gelée de coco ou perles éclatantes au litchi.
+              {t.supplements}
             </figcaption>
           </figure>
         </div>

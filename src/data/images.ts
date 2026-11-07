@@ -1,4 +1,5 @@
 import type { StaticImageData } from "next/image";
+import type { L } from "@/i18n/text";
 
 import heroSakuraRue from "@/assets/photos/hero-sakura-rue.jpg";
 import eauCocoMatcha from "@/assets/photos/eau-coco-matcha.jpg";
@@ -48,7 +49,8 @@ import carteSmoothieAvocat from "@/assets/photos/carte/smoothie-avocat-yaourt.jp
 
 export type Photo = {
   src: StaticImageData;
-  alt: string;
+  /** Texte alternatif, en français et en anglais */
+  alt: L;
   /** Point focal CSS (object-position) */
   focus?: string;
   /** Point focal sur mobile si différent */
@@ -58,115 +60,115 @@ export type Photo = {
 export const photos = {
   heroSakuraRue: {
     src: heroSakuraRue,
-    alt: "Un sakura matcha Zencca, couche de matcha sur lait rose, tenu dans une rue parisienne ensoleillée",
+    alt: { fr: "Un sakura matcha Zencca, couche de matcha sur lait rose, tenu dans une rue parisienne ensoleillée", en: "A Zencca sakura matcha, a layer of matcha over pink milk, held up in a sunny Paris street" },
     focus: "50% 45%",
   },
   eauCocoMatcha: {
     src: eauCocoMatcha,
-    alt: "Eau coco matcha Zencca : matcha vert sur eau de coco glacée, gobelet tenu sur fond ocre",
+    alt: { fr: "Eau coco matcha Zencca : matcha vert sur eau de coco glacée, gobelet tenu sur fond ocre", en: "Zencca matcha coconut water: green matcha over iced coconut water, cup held against an ochre wall" },
     focus: "40% 45%",
   },
   raisinSalon: {
     src: raisinSalon,
-    alt: "Thé au raisin frais Zencca, granité rouge et pulpe dorée, devant la fresque bleue du salon",
+    alt: { fr: "Thé au raisin frais Zencca, granité rouge et pulpe dorée, devant la fresque bleue du salon", en: "Zencca fresh grape tea, red slush and golden pulp, in front of the tea house's blue mural" },
     focus: "48% 50%",
   },
   raisinDetail: {
     src: raisinDetail,
-    alt: "Gros plan sur les couches d'un thé au raisin frais Zencca : granité rouge marbré et pulpe de fruit",
+    alt: { fr: "Gros plan sur les couches d'un thé au raisin frais Zencca : granité rouge marbré et pulpe de fruit", en: "Close-up of the layers of a Zencca fresh grape tea: marbled red slush and fruit pulp" },
     focus: "50% 45%",
   },
   oolongPecheRue: {
     src: oolongPecheRue,
-    alt: "Thé glacé ambré Zencca avec une tranche d'agrume, tenu dans une rue pavée de Paris",
+    alt: { fr: "Thé glacé ambré Zencca avec une tranche d'agrume, tenu dans une rue pavée de Paris", en: "An amber Zencca iced tea with a slice of citrus, held up in a cobbled Paris street" },
     focus: "52% 50%",
   },
   lacteMousse: {
     src: lacteMousse,
-    alt: "Boisson lactée Zencca marbrée de caramel, couronnée de mousse et de gelée ambrée",
+    alt: { fr: "Boisson lactée Zencca marbrée de caramel, couronnée de mousse et de gelée ambrée", en: "A Zencca milk drink marbled with caramel, crowned with foam and amber jelly" },
     focus: "50% 40%",
   },
   gobeletIllustre: {
     src: gobeletIllustre,
-    alt: "Gobelet chaud Zencca illustré d'une femme et d'un perroquet rouge, posé au soleil sur une table en bois",
+    alt: { fr: "Gobelet chaud Zencca illustré d'une femme et d'un perroquet rouge, posé au soleil sur une table en bois", en: "A hot Zencca cup illustrated with a woman and a red parrot, in the sun on a wooden table" },
     focus: "50% 50%",
   },
   cocoLatteService: {
     src: cocoLatteService,
-    alt: "Un barista Zencca verse un expresso sur du lait de coco glacé",
+    alt: { fr: "Un barista Zencca verse un expresso sur du lait de coco glacé", en: "A Zencca barista pours an espresso over iced coconut milk" },
     focus: "50% 40%",
   },
   toteBag: {
     src: toteBag,
-    alt: "Sac Zencca illustré d'un personnage au chapeau-montagne, tenu devant la porte en bois du salon",
+    alt: { fr: "Sac Zencca illustré d'un personnage au chapeau-montagne, tenu devant la porte en bois du salon", en: "A Zencca bag illustrated with a mountain-hat character, held in front of the tea house's wooden door" },
     focus: "50% 50%",
   },
   thesFruitsDuo: {
     src: thesFruitsDuo,
-    alt: "Deux thés aux fruits Zencca : l'un jaune au citron vert, l'autre rouge à la fraise",
+    alt: { fr: "Deux thés aux fruits Zencca : l'un jaune au citron vert, l'autre rouge à la fraise", en: "Two Zencca fruit teas: one yellow with lime, the other red with strawberry" },
     focus: "50% 50%",
   },
   comptoirNeon: {
     src: comptoirNeon,
-    alt: "Le comptoir Zencca sous le néon « Une rencontre infusée dans le thé », murs ocre et sol en terrazzo",
+    alt: { fr: "Le comptoir Zencca sous le néon « Une rencontre infusée dans le thé », murs ocre et sol en terrazzo", en: "The Zencca counter under the neon sign “Une rencontre infusée dans le thé”, ochre walls and terrazzo floor" },
     focus: "40% 40%",
   },
   salonFresque: {
     src: salonFresque,
-    alt: "L'intérieur du salon Zencca : comptoir, plafond lumineux, banc en bois et grande fresque fleurie en arche",
+    alt: { fr: "L'intérieur du salon Zencca : comptoir, plafond lumineux, banc en bois et grande fresque fleurie en arche", en: "Inside the Zencca tea house: counter, glowing ceiling, wooden bench and a large arched floral mural" },
     focus: "60% 50%",
   },
   facadeSoir: {
     src: facadeSoir,
-    alt: "La façade Zencca au 20 rue Tiquetonne à la tombée du jour, enseigne « Salon de Thé 甄茶 » éclairée",
+    alt: { fr: "La façade Zencca au 20 rue Tiquetonne à la tombée du jour, enseigne « Salon de Thé 甄茶 » éclairée", en: "The Zencca shopfront at 20 rue Tiquetonne at dusk, its “Salon de Thé 甄茶” sign lit up" },
     focus: "50% 50%",
   },
   facadeTerrasse: {
     src: facadeTerrasse,
-    alt: "La façade ocre de Zencca en journée avec ses chaises de terrasse et l'enseigne jaune",
+    alt: { fr: "La façade ocre de Zencca en journée avec ses chaises de terrasse et l'enseigne jaune", en: "Zencca's ochre shopfront by day, with its terrace chairs and yellow sign" },
     focus: "50% 55%",
   },
   facadeJour: {
     src: facadeJour,
-    alt: "L'entrée du salon de thé Zencca, rue Tiquetonne, portes en bois ouvertes sur le comptoir",
+    alt: { fr: "L'entrée du salon de thé Zencca, rue Tiquetonne, portes en bois ouvertes sur le comptoir", en: "The entrance of the Zencca tea house on rue Tiquetonne, wooden doors open onto the counter" },
     focus: "50% 50%",
   },
   enseigne: {
     src: enseigne,
-    alt: "L'enseigne jaune Zencca avec sa mascotte, accrochée à la façade au-dessus du store « 甄茶 »",
+    alt: { fr: "L'enseigne jaune Zencca avec sa mascotte, accrochée à la façade au-dessus du store « 甄茶 »", en: "The yellow Zencca sign and its mascot, hanging on the shopfront above the “甄茶” awning" },
     focus: "60% 45%",
   },
   offreMatin: {
     src: offreMatin,
-    alt: "Visuel de l'offre du matin Zencca : boissons, chocolat chaud et egg tart",
+    alt: { fr: "Visuel de l'offre du matin Zencca : boissons, chocolat chaud et egg tart", en: "Zencca morning deal: drinks, hot chocolate and an egg tart" },
     focus: "50% 50%",
   },
-  pCocoLatte: { src: pCocoLatte, alt: "Coco latte Zencca, café marbré sur lait de coco", focus: "50% 50%" },
-  pChocolatChaud: { src: pChocolatChaud, alt: "Chocolat chaud Zencca dans un gobelet illustré d'une grue", focus: "50% 50%" },
-  pMatchaLatte: { src: pMatchaLatte, alt: "Matcha latte Zencca, matcha vert sur lait", focus: "50% 50%" },
-  pEauCocoMatcha: { src: pEauCocoMatcha, alt: "Eau coco matcha Zencca", focus: "50% 50%" },
-  pLattePistache: { src: pLattePistache, alt: "Latte pistache Zencca parsemé d'éclats de pistache", focus: "50% 50%" },
-  pEggTart: { src: pEggTart, alt: "Egg tart dorée servie chez Zencca", focus: "50% 50%" },
-  carteMatchaLatte: { src: carteMatchaLatte, alt: "Matcha latte Zencca : matcha vert intense qui se fond dans le lait, gobelet transparent", focus: "50% 50%" },
-  carteEauCocoMatcha: { src: carteEauCocoMatcha, alt: "Eau coco matcha Zencca : matcha vert sur eau de coco glacée, gobelet transparent", focus: "50% 50%" },
-  carteSakuraMatcha: { src: carteSakuraMatcha, alt: "Sakura matcha Zencca : couche de matcha vert sur lait de coco rose, gobelet transparent", focus: "50% 50%" },
-  carteOolongPeche: { src: carteOolongPeche, alt: "Thé oolong pêche Zencca : thé orangé glacé, tranches d'orange contre la paroi", focus: "50% 50%" },
-  carteCitronFrappe: { src: carteCitronFrappe, alt: "Thé vert citron frappé Zencca : thé doré, glaçons et quartier de citron", focus: "50% 50%" },
-  carteRaisinFrais: { src: carteRaisinFrais, alt: "Thé au raisin frais Zencca : crème blanche, granité de raisin rouge et pulpe jaune", focus: "50% 50%" },
-  carteMangoPomelo: { src: carteMangoPomelo, alt: "Mango pomelo sago Zencca : crème de coco, pomelo rose, perles de sagou et mangue", focus: "50% 50%" },
-  carteMangoCocoBleu: { src: carteMangoCocoBleu, alt: "Mango coco bleu Zencca : couche bleu ciel, coco blanche et mangue jaune", focus: "50% 50%" },
-  carteBleuJasmin: { src: carteBleuJasmin, alt: "Thé au lait bleu jasmin Zencca : thé au lait bleu pâle et glaçons, gobelet transparent", focus: "50% 50%" },
-  carteLattePistache: { src: carteLattePistache, alt: "Latte pistache Zencca : crème de pistache beige fondant dans un lait blanc", focus: "50% 50%" },
-  carteLaitPerles: { src: carteLaitPerles, alt: "Les deux gobelets chauds illustrés Zencca : femme au perroquet rouge et grue dans les bambous", focus: "50% 50%" },
-  carteChocolatChaud: { src: carteChocolatChaud, alt: "Chocolat chaud Zencca dans le gobelet illustré d'une grue et de bambous", focus: "50% 50%" },
-  carteTaroCoco: { src: carteTaroCoco, alt: "Taro coco Zencca : crème de taro violette marbrant un lait de coco blanc", focus: "50% 50%" },
-  cartePistacheJasmin: { src: cartePistacheJasmin, alt: "Pistache jasmin coco Zencca : mousse beige mouchetée sur thé au jasmin doré", focus: "50% 50%" },
-  carteCafePistache: { src: carteCafePistache, alt: "Café latte pistache Zencca : crème de pistache, café caramel et lait", focus: "50% 50%" },
-  carteCocoAmericano: { src: carteCocoAmericano, alt: "Coco americano Zencca : café ambré sur glaçons et eau de coco claire", focus: "50% 50%" },
-  carteCocoLatte: { src: carteCocoLatte, alt: "Coco latte Zencca : expresso sombre posé sur un lait de coco épais", focus: "50% 50%" },
-  carteSmoothieMangue: { src: carteSmoothieMangue, alt: "Smoothie mangue yaourt Zencca : mangue dorée en spirale avec du yaourt blanc", focus: "50% 50%" },
-  carteSmoothiePeche: { src: carteSmoothiePeche, alt: "Smoothie pêche yaourt Zencca : yaourt blanc marbré de pêche rose saumon", focus: "50% 50%" },
-  carteSmoothieAvocat: { src: carteSmoothieAvocat, alt: "Smoothie avocat et yaourt Zencca : rubans d'avocat vert et de yaourt blanc", focus: "50% 50%" },
+  pCocoLatte: { src: pCocoLatte, alt: { fr: "Coco latte Zencca, café marbré sur lait de coco", en: "Zencca coconut latte, coffee marbled over coconut milk" }, focus: "50% 50%" },
+  pChocolatChaud: { src: pChocolatChaud, alt: { fr: "Chocolat chaud Zencca dans un gobelet illustré d'une grue", en: "Zencca hot chocolate in a cup illustrated with a crane" }, focus: "50% 50%" },
+  pMatchaLatte: { src: pMatchaLatte, alt: { fr: "Matcha latte Zencca, matcha vert sur lait", en: "Zencca matcha latte, green matcha over milk" }, focus: "50% 50%" },
+  pEauCocoMatcha: { src: pEauCocoMatcha, alt: { fr: "Eau coco matcha Zencca", en: "Zencca matcha coconut water" }, focus: "50% 50%" },
+  pLattePistache: { src: pLattePistache, alt: { fr: "Latte pistache Zencca parsemé d'éclats de pistache", en: "Zencca pistachio latte sprinkled with crushed pistachios" }, focus: "50% 50%" },
+  pEggTart: { src: pEggTart, alt: { fr: "Egg tart dorée servie chez Zencca", en: "A golden egg tart served at Zencca" }, focus: "50% 50%" },
+  carteMatchaLatte: { src: carteMatchaLatte, alt: { fr: "Matcha latte Zencca : matcha vert intense qui se fond dans le lait, gobelet transparent", en: "Zencca matcha latte: intense green matcha melting into milk, clear cup" }, focus: "50% 50%" },
+  carteEauCocoMatcha: { src: carteEauCocoMatcha, alt: { fr: "Eau coco matcha Zencca : matcha vert sur eau de coco glacée, gobelet transparent", en: "Zencca matcha coconut water: green matcha over iced coconut water, clear cup" }, focus: "50% 50%" },
+  carteSakuraMatcha: { src: carteSakuraMatcha, alt: { fr: "Sakura matcha Zencca : couche de matcha vert sur lait de coco rose, gobelet transparent", en: "Zencca sakura matcha: a layer of green matcha over pink coconut milk, clear cup" }, focus: "50% 50%" },
+  carteOolongPeche: { src: carteOolongPeche, alt: { fr: "Thé oolong pêche Zencca : thé orangé glacé, tranches d'orange contre la paroi", en: "Zencca peach oolong tea: iced orange tea, orange slices against the side of the cup" }, focus: "50% 50%" },
+  carteCitronFrappe: { src: carteCitronFrappe, alt: { fr: "Thé vert citron frappé Zencca : thé doré, glaçons et quartier de citron", en: "Zencca hand-shaken lemon green tea: golden tea, ice and a lemon wedge" }, focus: "50% 50%" },
+  carteRaisinFrais: { src: carteRaisinFrais, alt: { fr: "Thé au raisin frais Zencca : crème blanche, granité de raisin rouge et pulpe jaune", en: "Zencca fresh grape tea: white cream, red grape slush and yellow pulp" }, focus: "50% 50%" },
+  carteMangoPomelo: { src: carteMangoPomelo, alt: { fr: "Mango pomelo sago Zencca : crème de coco, pomelo rose, perles de sagou et mangue", en: "Zencca mango pomelo sago: coconut cream, pink pomelo, sago pearls and mango" }, focus: "50% 50%" },
+  carteMangoCocoBleu: { src: carteMangoCocoBleu, alt: { fr: "Mango coco bleu Zencca : couche bleu ciel, coco blanche et mangue jaune", en: "Zencca mango blue coco: a sky-blue layer, white coconut and yellow mango" }, focus: "50% 50%" },
+  carteBleuJasmin: { src: carteBleuJasmin, alt: { fr: "Thé au lait bleu jasmin Zencca : thé au lait bleu pâle et glaçons, gobelet transparent", en: "Zencca jasmine blue milk tea: pale blue milk tea and ice, clear cup" }, focus: "50% 50%" },
+  carteLattePistache: { src: carteLattePistache, alt: { fr: "Latte pistache Zencca : crème de pistache beige fondant dans un lait blanc", en: "Zencca pistachio latte: beige pistachio cream melting into white milk" }, focus: "50% 50%" },
+  carteLaitPerles: { src: carteLaitPerles, alt: { fr: "Les deux gobelets chauds illustrés Zencca : femme au perroquet rouge et grue dans les bambous", en: "The two illustrated Zencca hot cups: a woman with a red parrot, and a crane among bamboo" }, focus: "50% 50%" },
+  carteChocolatChaud: { src: carteChocolatChaud, alt: { fr: "Chocolat chaud Zencca dans le gobelet illustré d'une grue et de bambous", en: "Zencca hot chocolate in the cup illustrated with a crane and bamboo" }, focus: "50% 50%" },
+  carteTaroCoco: { src: carteTaroCoco, alt: { fr: "Taro coco Zencca : crème de taro violette marbrant un lait de coco blanc", en: "Zencca taro coconut: purple taro cream marbling white coconut milk" }, focus: "50% 50%" },
+  cartePistacheJasmin: { src: cartePistacheJasmin, alt: { fr: "Pistache jasmin coco Zencca : mousse beige mouchetée sur thé au jasmin doré", en: "Zencca pistachio jasmine coconut: speckled beige foam over golden jasmine tea" }, focus: "50% 50%" },
+  carteCafePistache: { src: carteCafePistache, alt: { fr: "Café latte pistache Zencca : crème de pistache, café caramel et lait", en: "Zencca pistachio coffee latte: pistachio cream, caramel-coloured coffee and milk" }, focus: "50% 50%" },
+  carteCocoAmericano: { src: carteCocoAmericano, alt: { fr: "Coco americano Zencca : café ambré sur glaçons et eau de coco claire", en: "Zencca coco americano: amber coffee over ice and clear coconut water" }, focus: "50% 50%" },
+  carteCocoLatte: { src: carteCocoLatte, alt: { fr: "Coco latte Zencca : expresso sombre posé sur un lait de coco épais", en: "Zencca coconut latte: dark espresso resting on thick coconut milk" }, focus: "50% 50%" },
+  carteSmoothieMangue: { src: carteSmoothieMangue, alt: { fr: "Smoothie mangue yaourt Zencca : mangue dorée en spirale avec du yaourt blanc", en: "Zencca mango yogurt smoothie: golden mango swirled with white yogurt" }, focus: "50% 50%" },
+  carteSmoothiePeche: { src: carteSmoothiePeche, alt: { fr: "Smoothie pêche yaourt Zencca : yaourt blanc marbré de pêche rose saumon", en: "Zencca peach yogurt smoothie: white yogurt marbled with salmon-pink peach" }, focus: "50% 50%" },
+  carteSmoothieAvocat: { src: carteSmoothieAvocat, alt: { fr: "Smoothie avocat et yaourt Zencca : rubans d'avocat vert et de yaourt blanc", en: "Zencca avocado yogurt smoothie: ribbons of green avocado and white yogurt" }, focus: "50% 50%" },
 } satisfies Record<string, Photo>;
 
 export type PhotoKey = keyof typeof photos;

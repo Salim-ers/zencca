@@ -56,17 +56,6 @@ html {
   scrollbar-gutter: stable;
 }
 
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-stopped {
-  overflow: clip;
-}
-
 body {
   font-family: var(--font-sans);
   background: var(--color-creme);
@@ -110,6 +99,10 @@ body {
 .font-display-wonk {
   font-variation-settings: "SOFT" 100, "WONK" 1;
 }
+/* L'italique a sa propre police, chargée sans préchargement (elle ne sert qu'au néon) */
+.font-display.italic {
+  font-family: var(--font-fraunces-italic), "Fraunces", ui-serif, Georgia, serif;
+}
 .font-cjk {
   font-family: var(--font-cjk);
   letter-spacing: 0.08em;
@@ -120,12 +113,6 @@ body {
   letter-spacing: 0.25em;
 }
 
-.t-hero {
-  font-size: clamp(2.9rem, 0.9rem + 6.2vw, 8.6rem);
-  line-height: 0.9;
-  font-weight: 560;
-  letter-spacing: -0.035em;
-}
 /* Titre de l'accueil : pleine largeur, borné aussi par la hauteur pour laisser la place au comptoir */
 .t-comptoir {
   font-size: clamp(2rem, min(13vw, 6.4svh), 3.6rem);
@@ -185,15 +172,6 @@ body {
 }
 .measure { max-width: 34rem; }
 
-/* Lignes masquées pour les reveals de texte */
-.line-mask {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
-}
-.line-mask > span { display: inline-block; will-change: transform; }
-
 /* ------------------------------------------------------------------
    Forme de la marque : la tuile du menu en boutique, au coin coupé.
    --coin règle le coin et --tuile-r l'arrondi, pour les petits formats.
@@ -243,18 +221,6 @@ body {
   background-color: var(--terrazzo-bg, #8f8a83);
   background-image: url("/textures/terrazzo.svg");
   background-size: 420px 420px;
-}
-
-/* Grain photographique discret */
-.grain::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: url("/textures/grain.png");
-  background-size: 180px;
-  opacity: 0.07;
-  mix-blend-mode: multiply;
 }
 
 /* Boutons */
@@ -311,11 +277,6 @@ body {
   --btn-fill: var(--color-encre);
   --btn-fg-hover: var(--color-enseigne);
 }
-.btn-cream {
-  --btn-bg: var(--color-papier);
-  --btn-fg: var(--color-encre);
-  --btn-fill: var(--color-enseigne);
-}
 .btn-ghost-light {
   --btn-bg: transparent;
   --btn-fg: var(--color-papier);
@@ -350,12 +311,69 @@ body {
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
 /* ------------------------------------------------------------------
-   Écran d'intro — masqué avant la peinture si déjà vu
+   Écran d'intro — masqué avant la peinture si déjà vu.
+   La séquence est jouée en CSS dès le premier affichage, pendant le
+   chargement de la page ; le JavaScript lève l'écran quand tout est prêt.
 ------------------------------------------------------------------- */
 html.intro-seen #zencca-intro { display: none; }
+html.js:not(.intro-seen) { background: #fff; }
 html.js:not(.intro-seen):not(.intro-done) body { overflow: hidden; }
 html:not(.js) #zencca-intro { display: none; }
-html.js:not(.intro-seen) #zencca-intro svg { opacity: 0; }
+/* Garde-fou : si le JavaScript n'a pas pris la main au bout de 6 s, l'écran s'efface */
+html.js.intro-done:not(.intro-seen) #zencca-intro {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+}
+
+html.js:not(.intro-seen) #zencca-intro svg {
+  animation: intro-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+html.js:not(.intro-seen) #zencca-intro [data-part="eyes"] path {
+  animation: intro-blink 0.17s ease-in-out 0.35s, intro-blink 0.17s ease-in-out 1s;
+}
+html.js:not(.intro-seen) #zencca-intro [data-part="mouth"] {
+  animation: intro-mouth 0.6s ease-in-out 0.4s;
+}
+html.js:not(.intro-seen) #zencca-intro [data-part="brows"] {
+  animation: intro-brows 0.6s ease-in-out 0.4s;
+}
+/* La gorgée : le niveau passe de 0,9 à 0,45 du gobelet */
+html.js:not(.intro-seen) #zencca-intro [data-part="liquid"] {
+  animation: intro-sip 0.6s cubic-bezier(0.65, 0, 0.35, 1) 0.4s both;
+}
+html.js:not(.intro-seen) #zencca-intro [data-letters] path {
+  transform-box: fill-box;
+  animation: intro-letter 0.45s cubic-bezier(0.34, 1.9, 0.64, 1) 0.5s both;
+}
+html.js:not(.intro-seen) #zencca-intro [data-letters] path:nth-child(2) { animation-delay: 0.54s; }
+html.js:not(.intro-seen) #zencca-intro [data-letters] path:nth-child(3) { animation-delay: 0.58s; }
+html.js:not(.intro-seen) #zencca-intro [data-letters] path:nth-child(4) { animation-delay: 0.62s; }
+html.js:not(.intro-seen) #zencca-intro [data-letters] path:nth-child(5) { animation-delay: 0.66s; }
+html.js:not(.intro-seen) #zencca-intro [data-letters] path:nth-child(6) { animation-delay: 0.7s; }
+
+@keyframes intro-pop {
+  from { opacity: 0; transform: translateY(20px) scale(0.86); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes intro-letter {
+  from { opacity: 0; transform: translateY(60%); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes intro-blink {
+  50% { transform: scaleY(0.08); }
+}
+@keyframes intro-mouth {
+  25% { transform: scale(0.86, 1.08); }
+  50% { transform: scale(1.04, 0.95); }
+  75% { transform: scale(0.88, 1.06); }
+}
+@keyframes intro-brows {
+  50% { transform: translateY(-10px); }
+}
+@keyframes intro-sip {
+  to { transform: translateY(65.7px); }
+}
 
 /* Les éléments animés à l'entrée sont cachés tant que JS n'a pas pris la main */
 html.js [data-enter] { visibility: hidden; }

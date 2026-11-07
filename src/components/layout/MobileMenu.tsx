@@ -6,25 +6,34 @@ import { useEffect, useRef } from "react";
 import Mascot from "@/components/brand/Mascot";
 import TransitionLink from "@/components/transition/TransitionLink";
 import { WaveEdge } from "@/components/ui/Strata";
+import LangSwitch from "./LangSwitch";
 import { nav, site } from "@/data/site";
 import { photos, type PhotoKey } from "@/data/images";
-import { lockScroll } from "@/lib/lenis";
+import { useLocale, useT } from "@/i18n/client";
+import type { RouteKey } from "@/i18n/routes";
+import { lockScroll } from "@/lib/scroll";
 
-const thumbs: Record<string, PhotoKey> = {
-  "/": "facadeTerrasse",
-  "/la-carte": "pMatchaLatte",
-  "/notre-univers": "comptoirNeon",
-  "/galerie": "raisinSalon",
-  "/nouveautes": "pLattePistache",
-  "/nous-trouver": "enseigne",
+const thumbs: Record<RouteKey, PhotoKey> = {
+  home: "facadeTerrasse",
+  carte: "pMatchaLatte",
+  univers: "comptoirNeon",
+  galerie: "raisinSalon",
+  nouveautes: "pLattePistache",
+  visite: "enseigne",
 };
 
 const ease = [0.65, 0.05, 0.36, 1] as const;
 
 export default function MobileMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const locale = useLocale();
+  const t = useT().common;
   const panel = useRef<HTMLDivElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
   const opener = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -32,7 +41,7 @@ export default function MobileMenu({ open, onClose }: { open: boolean; onClose: 
     lockScroll(true);
     const t = setTimeout(() => closeBtn.current?.focus(), 60);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") onCloseRef.current();
       if (e.key === "Tab" && panel.current) {
         const f = panel.current.querySelectorAll<HTMLElement>("a[href], button:not([disabled])");
         const first = f[0];
@@ -53,15 +62,15 @@ export default function MobileMenu({ open, onClose }: { open: boolean; onClose: 
       lockScroll(false);
       opener.current?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open]);
 
   // Fermer si l'écran passe en desktop
   useEffect(() => {
     const mq = window.matchMedia("(min-width: 1024px)");
-    const fn = () => mq.matches && onClose();
+    const fn = () => mq.matches && onCloseRef.current();
     mq.addEventListener("change", fn);
     return () => mq.removeEventListener("change", fn);
-  }, [onClose]);
+  }, []);
 
   return (
     <AnimatePresence>
@@ -71,7 +80,7 @@ export default function MobileMenu({ open, onClose }: { open: boolean; onClose: 
           ref={panel}
           role="dialog"
           aria-modal="true"
-          aria-label="Menu"
+          aria-label={t.menu}
           className="fixed inset-0 z-[90] flex flex-col overflow-y-auto overscroll-contain lg:hidden"
           initial="closed"
           animate="open"
@@ -109,14 +118,14 @@ export default function MobileMenu({ open, onClose }: { open: boolean; onClose: 
                 variants={{ closed: { opacity: 0, scale: 0.8 }, open: { opacity: 1, scale: 1, transition: { delay: 0.3 } } }}
                 className="flex h-12 items-center gap-3 rounded-full bg-encre pl-5 pr-4 text-papier"
               >
-                <span className="text-[0.95rem] font-semibold">Fermer</span>
+                <span className="text-[0.95rem] font-semibold">{t.close}</span>
                 <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden>
                   <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
                 </svg>
               </motion.button>
             </div>
 
-            <nav aria-label="Menu mobile" className="mt-8 flex-1">
+            <nav aria-label={t.mobileNav} className="mt-8 flex-1">
               <ul className="flex flex-col">
                 {nav.map((l, i) => (
                   <motion.li
@@ -133,9 +142,9 @@ export default function MobileMenu({ open, onClose }: { open: boolean; onClose: 
                       onClick={onClose}
                       className="group flex items-center justify-between gap-4 py-3.5 aria-[current=page]:text-matcha-fonce"
                     >
-                      <span className="font-display text-[clamp(2.1rem,9vw,3.4rem)] leading-none">{l.label}</span>
+                      <span className="font-display text-[clamp(2.1rem,9vw,3.4rem)] leading-none">{l.label[locale]}</span>
                       <span className="tuile relative h-14 w-11 shrink-0 [--coin:0.85rem] [--tuile-r:0.35rem] transition-transform duration-500 group-active:scale-95">
-                        <Image src={photos[thumbs[l.href]].src} alt="" fill sizes="44px" className="object-cover" />
+                        <Image src={photos[thumbs[l.key]].src} alt="" fill sizes="44px" className="object-cover" />
                       </span>
                     </TransitionLink>
                   </motion.li>
@@ -155,6 +164,7 @@ export default function MobileMenu({ open, onClose }: { open: boolean; onClose: 
                 <a href={site.instagram.url} target="_blank" rel="noopener noreferrer" className="link-infuse mt-2 inline-block">
                   Instagram {site.instagram.handle}
                 </a>
+                <LangSwitch long className="link-infuse mt-3 block w-max" />
               </div>
               <div className="w-24 shrink-0 translate-y-3">
                 <Mascot variant="mascot" liquid="#ebbfc6" decorative />
